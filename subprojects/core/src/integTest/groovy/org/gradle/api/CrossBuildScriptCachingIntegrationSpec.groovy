@@ -614,18 +614,6 @@ task fastTask { }
 
     def "script don't get recompiled if daemon disappears"() {
         root {
-            buildSrc {
-                'build.gradle'('''
-                    apply plugin: 'java'
-                ''')
-                src {
-                    main {
-                        java {
-                            'Foo.java'('public class Foo {}')
-                        }
-                    }
-                }
-            }
             'build.gradle'('''apply from:'main.gradle' ''')
             'main.gradle'('''
                 task success {
@@ -646,6 +634,7 @@ task fastTask { }
 
         then:
         String hash = uniqueRemapped('main')
+        // TODO:pm find out why this change is necessary!
         getCompileClasspath(hash, 'dsl').length == 1
     }
 
@@ -699,7 +688,7 @@ task fastTask { }
 
     String uniqueRemapped(String buildFile) {
         def hashes = hasRemapped(buildFile)
-        assert hashes.size() == 1
+        assert hashes.size() == 1 : "Non unique remapped script for $buildFile"
         hashes[0]
     }
 

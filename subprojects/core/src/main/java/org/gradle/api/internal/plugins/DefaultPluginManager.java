@@ -203,7 +203,7 @@ public class DefaultPluginManager implements PluginManagerInternal {
             pluginsForId = new DefaultDomainObjectSet<PluginWithId>(PluginWithId.class, Sets.<PluginWithId>newLinkedHashSet());
             idMappings.put(pluginId, pluginsForId);
             for (PluginImplementation<?> plugin : plugins.values()) {
-                if (plugin.isAlsoKnownAs(pluginId)) {
+                if (pluginId.equals(plugin.getPluginId()) || plugin.isAlsoKnownAs(pluginId)) {
                     pluginsForId.add(new PluginWithId(pluginId, plugin.asClass()));
                 }
             }
@@ -259,13 +259,7 @@ public class DefaultPluginManager implements PluginManagerInternal {
         }
 
         private BuildOperationDescriptor.Builder computeApplyPluginBuildOperationDetails(final PluginImplementation<?> pluginImplementation) {
-            String pluginIdentifier;
-            if (pluginImplementation.getPluginId() != null) {
-                pluginIdentifier = pluginImplementation.getPluginId().toString();
-            } else {
-                pluginIdentifier = pluginImplementation.asClass().getName();
-            }
-            String name = "Apply plugin " + pluginIdentifier;
+            String name = "Apply plugin " + pluginImplementation.getDisplayName();
             return BuildOperationDescriptor.displayName(name + " to " + target.toString())
                 .name(name)
                 .details(new OperationDetails(pluginImplementation, target.getConfigurationTargetIdentifier()));
