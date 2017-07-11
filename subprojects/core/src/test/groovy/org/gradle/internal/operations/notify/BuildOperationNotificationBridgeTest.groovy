@@ -16,7 +16,9 @@
 
 package org.gradle.internal.operations.notify
 
+import org.gradle.api.internal.GradleInternal
 import org.gradle.internal.event.DefaultListenerManager
+import org.gradle.internal.operations.trace.BuildOperationStore
 import org.gradle.internal.progress.BuildOperationDescriptor
 import org.gradle.internal.progress.BuildOperationListener
 import org.gradle.internal.progress.BuildOperationListenerManager
@@ -32,6 +34,8 @@ class BuildOperationNotificationBridgeTest extends Specification {
     BuildOperationNotificationBridge bridge
     def broadcast = rawListenerManager.getBroadcaster(BuildOperationListener)
     def listener = Mock(BuildOperationNotificationListener)
+    def buildOperationStore = Mock(BuildOperationStore)
+    GradleInternal gradleInternal = Mock(GradleInternal)
 
     def "removes listener when stopped"() {
         given:
@@ -237,12 +241,12 @@ class BuildOperationNotificationBridgeTest extends Specification {
         1 * listener.finished(_) >> { BuildOperationFinishedNotification n ->
             assert n.notificationOperationId == d1.id
         }
-
     }
 
     void register(BuildOperationNotificationListener listener) {
         if (bridge == null) {
-            bridge = new BuildOperationNotificationBridge(listenerManager, buildOperationStore)
+            _ * buildOperationStore.getStoredEvents() >> []
+            bridge = new BuildOperationNotificationBridge(listenerManager, buildOperationStore, gradleInternal)
         }
         bridge.registerBuildScopeListener(listener)
     }

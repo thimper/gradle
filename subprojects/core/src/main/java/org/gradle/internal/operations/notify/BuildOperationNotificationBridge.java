@@ -16,6 +16,9 @@
 
 package org.gradle.internal.operations.notify;
 
+import org.gradle.api.Action;
+import org.gradle.api.Project;
+import org.gradle.api.internal.GradleInternal;
 import org.gradle.internal.concurrent.Stoppable;
 import org.gradle.internal.operations.trace.BuildOperationStore;
 import org.gradle.internal.progress.BuildOperationDescriptor;
@@ -37,16 +40,25 @@ class BuildOperationNotificationBridge implements BuildOperationNotificationList
 
     private Listener operationListener;
     private final BuildOperationListenerManager buildOperationListenerManager;
-    private final BuildOperationStore buildOperationStore;
+    private BuildOperationStore buildOperationStore;
 
-    BuildOperationNotificationBridge(BuildOperationListenerManager buildOperationListenerManager, BuildOperationStore buildOperationStore) {
+    BuildOperationNotificationBridge(BuildOperationListenerManager buildOperationListenerManager, BuildOperationStore buildOperationStore, GradleInternal gradleInternal) {
         this.buildOperationListenerManager = buildOperationListenerManager;
         this.buildOperationStore = buildOperationStore;
+        // ensure we only store events for configuration phase to keep overhead small
+        // when build scan plugin is not applied
+        gradleInternal.rootProject(new Action<Project>() {
+            @Override
+            public void execute(Project project) {
+                if (BuildOperationNotificationBridge.this.buildOperationStore == null) {
+                    BuildOperationNotificationBridge.this.buildOperationStore.stop();
+                }
+            }
+        });
     }
 
     @Override
     public void registerBuildScopeListener(BuildOperationNotificationListener notificationListener) {
-        System.out.println("BuildOperationNotificationBridge.registerBuildScopeListener");
         if (operationListener == null) {
             operationListener = new Listener(notificationListener);
             buildOperationListenerManager.addListener(operationListener);
@@ -54,16 +66,17 @@ class BuildOperationNotificationBridge implements BuildOperationNotificationList
             for (BuildOperationStore.StoredBuildOperation storedEvent : storedEvents) {
                 BuildOperationDescriptor buildOperationDescriptor = storedEvent.buildOperation;
                 Object event = storedEvent.event;
-                if(event instanceof OperationStartEvent){
+                if (event instanceof OperationStartEvent) {
                     operationListener.started(buildOperationDescriptor, (OperationStartEvent) event);
                 } else {
                     operationListener.finished(buildOperationDescriptor, (OperationFinishEvent) event);
                 }
             }
+            buildOperationStore.stop();
+            buildOperationStore = null;
         } else {
             throw new IllegalStateException("listener is already registered");
         }
-        System.out.println("BuildOperationNotificationBridge.registerBuildScopeListener finished");
     }
 
     @Override

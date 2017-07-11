@@ -26,14 +26,14 @@ import org.gradle.internal.progress.OperationStartEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BuildOperationStore implements Stoppable{
+public class BuildOperationStore implements Stoppable {
 
     private final BuildOperationListenerManager listenerManager;
     private final BuildOperationListener listener;
 
     private List<StoredBuildOperation> storedEvents = new ArrayList<StoredBuildOperation>();
 
-    public BuildOperationStore(BuildOperationListenerManager listenerManager){
+    public BuildOperationStore(BuildOperationListenerManager listenerManager) {
         this.listenerManager = listenerManager;
         this.listener = new BuildOperationListener() {
             @Override
@@ -44,14 +44,15 @@ public class BuildOperationStore implements Stoppable{
             @Override
             public void finished(BuildOperationDescriptor buildOperation, OperationFinishEvent finishEvent) {
                 storedEvents.add(new StoredBuildOperation(buildOperation, finishEvent));
-
             }
         };
         this.listenerManager.addListener(listener);
     }
 
     public List<StoredBuildOperation> getStoredEvents() {
-        return storedEvents;
+        List<StoredBuildOperation> storedBuildOperations = new ArrayList<StoredBuildOperation>(storedEvents);
+        storedEvents.clear();
+        return storedBuildOperations;
     }
 
     @Override
