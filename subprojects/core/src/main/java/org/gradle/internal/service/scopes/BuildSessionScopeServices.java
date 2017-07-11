@@ -63,6 +63,7 @@ import org.gradle.internal.logging.progress.ProgressLoggerFactory;
 import org.gradle.internal.nativeplatform.filesystem.FileSystem;
 import org.gradle.internal.operations.BuildOperationExecutor;
 import org.gradle.internal.operations.DefaultBuildOperationQueueFactory;
+import org.gradle.internal.operations.trace.BuildOperationStore;
 import org.gradle.internal.operations.trace.BuildOperationTrace;
 import org.gradle.internal.progress.BuildOperationListener;
 import org.gradle.internal.progress.BuildOperationListenerManager;
@@ -133,6 +134,11 @@ public class BuildSessionScopeServices extends DefaultServiceRegistry {
     EventClock createEventClock(TimeProvider timeProvider){
         return new DefaultEventClock(timeProvider);
     }
+
+    BuildOperationStore createBuildOperationStore(BuildOperationListenerManager listenerManager) {
+        return new BuildOperationStore(listenerManager);
+    }
+
     BuildOperationExecutor createBuildOperationExecutor(
         ListenerManager listenerManager,
         EventClock eventClock,
@@ -141,7 +147,8 @@ public class BuildSessionScopeServices extends DefaultServiceRegistry {
         ExecutorFactory executorFactory,
         ResourceLockCoordinationService resourceLockCoordinationService,
         ParallelismConfigurationManager parallelismConfigurationManager,
-        @SuppressWarnings("unused") BuildOperationTrace buildOperationTrace // required in order to init this
+        @SuppressWarnings("unused") BuildOperationTrace buildOperationTrace, // required in order to init this
+        @SuppressWarnings("unused") BuildOperationStore buildOperationStore // required in order to init this
     ) {
         return new DefaultBuildOperationExecutor(
             listenerManager.getBroadcaster(BuildOperationListener.class),

@@ -17,6 +17,7 @@
 package org.gradle.internal.operations.notify;
 
 import org.gradle.internal.concurrent.Stoppable;
+import org.gradle.internal.operations.trace.BuildOperationStore;
 import org.gradle.internal.progress.BuildOperationDescriptor;
 import org.gradle.internal.progress.BuildOperationListener;
 import org.gradle.internal.progress.BuildOperationListenerManager;
@@ -26,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -35,19 +37,33 @@ class BuildOperationNotificationBridge implements BuildOperationNotificationList
 
     private Listener operationListener;
     private final BuildOperationListenerManager buildOperationListenerManager;
+    private final BuildOperationStore buildOperationStore;
 
-    BuildOperationNotificationBridge(BuildOperationListenerManager buildOperationListenerManager) {
+    BuildOperationNotificationBridge(BuildOperationListenerManager buildOperationListenerManager, BuildOperationStore buildOperationStore) {
         this.buildOperationListenerManager = buildOperationListenerManager;
+        this.buildOperationStore = buildOperationStore;
     }
 
     @Override
     public void registerBuildScopeListener(BuildOperationNotificationListener notificationListener) {
+        System.out.println("BuildOperationNotificationBridge.registerBuildScopeListener");
         if (operationListener == null) {
             operationListener = new Listener(notificationListener);
             buildOperationListenerManager.addListener(operationListener);
+            List<BuildOperationStore.StoredBuildOperation> storedEvents = buildOperationStore.getStoredEvents();
+            for (BuildOperationStore.StoredBuildOperation storedEvent : storedEvents) {
+                BuildOperationDescriptor buildOperationDescriptor = storedEvent.buildOperation;
+                Object event = storedEvent.event;
+                if(event instanceof OperationStartEvent){
+                    operationListener.started(buildOperationDescriptor, (OperationStartEvent) event);
+                } else {
+                    operationListener.finished(buildOperationDescriptor, (OperationFinishEvent) event);
+                }
+            }
         } else {
             throw new IllegalStateException("listener is already registered");
         }
+        System.out.println("BuildOperationNotificationBridge.registerBuildScopeListener finished");
     }
 
     @Override

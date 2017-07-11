@@ -242,7 +242,7 @@ class BuildOperationNotificationBridgeTest extends Specification {
 
     void register(BuildOperationNotificationListener listener) {
         if (bridge == null) {
-            bridge = new BuildOperationNotificationBridge(listenerManager)
+            bridge = new BuildOperationNotificationBridge(listenerManager, buildOperationStore)
         }
         bridge.registerBuildScopeListener(listener)
     }
