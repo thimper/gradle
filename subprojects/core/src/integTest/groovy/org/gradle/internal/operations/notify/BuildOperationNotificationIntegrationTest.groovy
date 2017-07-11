@@ -22,7 +22,9 @@ import org.gradle.configuration.project.ConfigureProjectBuildOperationType
 import org.gradle.integtests.fixtures.AbstractIntegrationSpec
 import org.gradle.internal.execution.ExecuteTaskBuildOperationType
 import org.gradle.internal.taskgraph.CalculateTaskGraphBuildOperationType
+import spock.lang.Ignore
 
+@Ignore
 class BuildOperationNotificationIntegrationTest extends AbstractIntegrationSpec {
 
     String registerListener() {
