@@ -17,6 +17,7 @@
 package org.gradle.internal.operations.notify;
 
 import org.gradle.internal.scan.UsedByScanPlugin;
+import org.gradle.internal.time.Timestamp;
 
 import javax.annotation.Nullable;
 
@@ -61,5 +62,7 @@ public interface BuildOperationStartedNotification {
         Specifically, it goes to some effort to provide monotonic timestamps (and the observed value) if different,
         and deterministic ordering of events that yield the same timestamp value (e.g. two clock reads quicker than the clock granularity).
      */
+
+    Timestamp getTimestamp();
 
 }

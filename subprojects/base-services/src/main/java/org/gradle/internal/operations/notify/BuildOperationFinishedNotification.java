@@ -17,6 +17,7 @@
 package org.gradle.internal.operations.notify;
 
 import org.gradle.internal.scan.UsedByScanPlugin;
+import org.gradle.internal.time.Timestamp;
 
 import javax.annotation.Nullable;
 
@@ -68,5 +69,7 @@ public interface BuildOperationFinishedNotification {
      * Null if the operation was successful.
      */
     Throwable getNotificationOperationFailure();
+
+    Timestamp getTimestamp();
 
 }

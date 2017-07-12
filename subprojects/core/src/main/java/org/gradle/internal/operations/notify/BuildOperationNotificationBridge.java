@@ -26,6 +26,7 @@ import org.gradle.internal.progress.BuildOperationListener;
 import org.gradle.internal.progress.BuildOperationListenerManager;
 import org.gradle.internal.progress.OperationFinishEvent;
 import org.gradle.internal.progress.OperationStartEvent;
+import org.gradle.internal.time.Timestamp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +54,7 @@ class BuildOperationNotificationBridge implements BuildOperationNotificationList
                 project.afterEvaluate(new Action<Project>() {
                     @Override
                     public void execute(Project project) {
-                        if (BuildOperationNotificationBridge.this.buildOperationStore == null) {
+                        if (BuildOperationNotificationBridge.this.buildOperationStore != null) {
                             BuildOperationNotificationBridge.this.buildOperationStore.stop();
                         }
                     }
@@ -131,7 +132,7 @@ class BuildOperationNotificationBridge implements BuildOperationNotificationList
 
             active.put(id, "");
 
-            Started notification = new Started(id, parentId, buildOperation.getDetails());
+            Started notification = new Started(id, parentId, buildOperation.getDetails(), startEvent.getStartTime());
             try {
                 notificationListener.started(notification);
             } catch (Throwable e) {
@@ -154,7 +155,7 @@ class BuildOperationNotificationBridge implements BuildOperationNotificationList
                 return;
             }
 
-            Finished notification = new Finished(id, parentId, buildOperation.getDetails(), finishEvent.getResult(), finishEvent.getFailure());
+            Finished notification = new Finished(id, parentId, buildOperation.getDetails(), finishEvent.getResult(), finishEvent.getFailure(), finishEvent.getEndTime());
             try {
                 notificationListener.finished(notification);
             } catch (Throwable e) {
@@ -169,11 +170,13 @@ class BuildOperationNotificationBridge implements BuildOperationNotificationList
         private final Object id;
         private final Object parentId;
         private final Object details;
+        private final Timestamp timestamp;
 
-        private Started(Object id, Object parentId, Object details) {
+        private Started(Object id, Object parentId, Object details, Timestamp timestamp) {
             this.id = id;
             this.parentId = parentId;
             this.details = details;
+            this.timestamp = timestamp;
         }
 
         @Override
@@ -189,6 +192,11 @@ class BuildOperationNotificationBridge implements BuildOperationNotificationList
         @Override
         public Object getNotificationOperationDetails() {
             return details;
+        }
+
+        @Override
+        public Timestamp getTimestamp() {
+            return timestamp;
         }
 
         @Override
@@ -208,13 +216,15 @@ class BuildOperationNotificationBridge implements BuildOperationNotificationList
         private final Object details;
         private final Object result;
         private final Throwable failure;
+        private final Timestamp timestamp;
 
-        private Finished(Object id, Object parentId, Object details, Object result, Throwable failure) {
+        private Finished(Object id, Object parentId, Object details, Object result, Throwable failure, Timestamp timestamp) {
             this.id = id;
             this.parentId = parentId;
             this.details = details;
             this.result = result;
             this.failure = failure;
+            this.timestamp = timestamp;
         }
 
         @Override
@@ -241,6 +251,11 @@ class BuildOperationNotificationBridge implements BuildOperationNotificationList
         @Override
         public Throwable getNotificationOperationFailure() {
             return failure;
+        }
+
+        @Override
+        public Timestamp getTimestamp() {
+            return timestamp;
         }
 
         @Override
