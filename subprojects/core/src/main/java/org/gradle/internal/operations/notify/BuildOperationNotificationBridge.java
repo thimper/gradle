@@ -50,9 +50,14 @@ class BuildOperationNotificationBridge implements BuildOperationNotificationList
         gradleInternal.rootProject(new Action<Project>() {
             @Override
             public void execute(Project project) {
-                if (BuildOperationNotificationBridge.this.buildOperationStore == null) {
-                    BuildOperationNotificationBridge.this.buildOperationStore.stop();
-                }
+                project.afterEvaluate(new Action<Project>() {
+                    @Override
+                    public void execute(Project project) {
+                        if (BuildOperationNotificationBridge.this.buildOperationStore == null) {
+                            BuildOperationNotificationBridge.this.buildOperationStore.stop();
+                        }
+                    }
+                });
             }
         });
     }
