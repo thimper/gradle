@@ -46,4 +46,9 @@ public class MockTimeProvider implements TimeProvider {
     public long getCurrentTimeForDuration() {
         return getCurrentTime();
     }
+
+    @Override
+    public long getNanoTime() {
+        return current * 1000000;
+    }
 }

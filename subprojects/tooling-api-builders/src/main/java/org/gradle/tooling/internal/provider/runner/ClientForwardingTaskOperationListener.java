@@ -66,7 +66,7 @@ class ClientForwardingTaskOperationListener implements BuildOperationListener {
         if (buildOperation.getDetails() instanceof ExecuteTaskBuildOperationDetails) {
             if (clientSubscriptions.isSendTaskProgressEvents()) {
                 Task task = ((ExecuteTaskBuildOperationDetails) buildOperation.getDetails()).getTask();
-                eventConsumer.dispatch(new DefaultTaskStartedProgressEvent(startEvent.getStartTime(), toTaskDescriptor(buildOperation, (TaskInternal) task)));
+                eventConsumer.dispatch(new DefaultTaskStartedProgressEvent(startEvent.getStartTime().normalized, toTaskDescriptor(buildOperation, (TaskInternal) task)));
             } else {
                 // Discard this operation and all children
                 skipEvents.add(buildOperation.getId());
@@ -85,7 +85,7 @@ class ClientForwardingTaskOperationListener implements BuildOperationListener {
         if (buildOperation.getDetails() instanceof ExecuteTaskBuildOperationDetails) {
             Task task = ((ExecuteTaskBuildOperationDetails) buildOperation.getDetails()).getTask();
             TaskInternal taskInternal = (TaskInternal) task;
-            eventConsumer.dispatch(new DefaultTaskFinishedProgressEvent(finishEvent.getEndTime(), toTaskDescriptor(buildOperation, taskInternal), toTaskResult(taskInternal, finishEvent)));
+            eventConsumer.dispatch(new DefaultTaskFinishedProgressEvent(finishEvent.getEndTime().normalized, toTaskDescriptor(buildOperation, taskInternal), toTaskResult(taskInternal, finishEvent)));
         } else {
             delegate.finished(buildOperation, finishEvent);
         }
@@ -107,8 +107,8 @@ class ClientForwardingTaskOperationListener implements BuildOperationListener {
 
     private static AbstractTaskResult toTaskResult(TaskInternal task, OperationFinishEvent result) {
         TaskStateInternal state = task.getState();
-        long startTime = result.getStartTime();
-        long endTime = result.getEndTime();
+        long startTime = result.getStartTime().normalized;
+        long endTime = result.getEndTime().normalized;
 
         if (state.getUpToDate()) {
             return new DefaultTaskSuccessResult(startTime, endTime, true, state.isFromCache(), state.getSkipMessage());

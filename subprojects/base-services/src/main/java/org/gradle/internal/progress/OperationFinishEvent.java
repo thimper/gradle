@@ -16,26 +16,27 @@
 
 package org.gradle.internal.progress;
 
-import javax.annotation.Nullable;
+import org.gradle.api.Nullable;
+import org.gradle.internal.time.Timestamp;
 
 public final class OperationFinishEvent {
-    private final long startTime;
-    private final long endTime;
+    private final Timestamp startTime;
+    private final Timestamp endTime;
     private final Throwable failure;
     private final Object result;
 
-    public OperationFinishEvent(long startTime, long endTime, Throwable failure, Object result) {
+    public OperationFinishEvent(Timestamp startTime, Timestamp endTime, Throwable failure, Object result) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.failure = failure;
         this.result = result;
     }
 
-    public long getStartTime() {
+    public Timestamp getStartTime() {
         return startTime;
     }
 
-    public long getEndTime() {
+    public Timestamp getEndTime() {
         return endTime;
     }
 

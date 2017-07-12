@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableMap;
 import org.gradle.internal.logging.events.OperationIdentifier;
 import org.gradle.internal.progress.BuildOperationDescriptor;
 import org.gradle.internal.progress.OperationFinishEvent;
+import org.gradle.internal.time.Timestamp;
 
 import java.util.Map;
 
@@ -27,7 +28,7 @@ class SerializedOperationFinish {
 
     final Object id;
 
-    final long endTime;
+    final Timestamp endTime;
 
     final Object result;
     final String resultClassName;
@@ -44,7 +45,7 @@ class SerializedOperationFinish {
 
     SerializedOperationFinish(Map<String, ?> map) {
         this.id = map.get("id");
-        this.endTime = (Long) map.get("endTime");
+        this.endTime = (Timestamp) map.get("endTime");
         this.result = map.get("result");
         this.resultClassName = (String) map.get("resultClassName");
         this.failureMsg = (String) map.get("failure");

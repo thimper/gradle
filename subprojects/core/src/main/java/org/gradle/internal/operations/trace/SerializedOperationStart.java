@@ -22,6 +22,7 @@ import org.gradle.internal.execution.ExecuteTaskBuildOperationType;
 import org.gradle.internal.logging.events.OperationIdentifier;
 import org.gradle.internal.progress.BuildOperationDescriptor;
 import org.gradle.internal.progress.OperationStartEvent;
+import org.gradle.internal.time.Timestamp;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +33,7 @@ class SerializedOperationStart {
     final Object parentId;
     final String displayName;
 
-    final long startTime;
+    final Timestamp startTime;
 
     final Object details;
     final String detailsClassName;
@@ -75,7 +76,7 @@ class SerializedOperationStart {
         this.id = map.get("id");
         this.parentId = map.get("parentId");
         this.displayName = (String) map.get("displayName");
-        this.startTime = (Long) map.get("startTime");
+        this.startTime = (Timestamp) map.get("startTime");
         this.details = map.get("details");
         this.detailsClassName = (String) map.get("detailsClassName");
     }

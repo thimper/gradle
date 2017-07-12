@@ -48,6 +48,11 @@ class OutputEventListenerBackedLoggerTest extends Specification {
         long getCurrentTimeForDuration() {
             return now
         }
+
+        @Override
+        long getNanoTime() {
+            return now * 1000000
+        }
     }
     final OutputEventListenerBackedLoggerContext context = new OutputEventListenerBackedLoggerContext(System.out, System.err, timeProvider)
 

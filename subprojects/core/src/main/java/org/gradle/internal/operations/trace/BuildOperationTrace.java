@@ -190,7 +190,7 @@ public class BuildOperationTrace implements Stoppable {
                         }
 
                         stringBuilder.append(" [");
-                        stringBuilder.append(record.endTime - record.startTime);
+                        stringBuilder.append(record.endTime.normalized - record.startTime.normalized);
                         stringBuilder.append("ms]");
 
                         stringBuilder.append(" (");

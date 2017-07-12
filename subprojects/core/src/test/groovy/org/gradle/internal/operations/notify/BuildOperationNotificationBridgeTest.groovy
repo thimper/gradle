@@ -22,6 +22,7 @@ import org.gradle.internal.progress.BuildOperationListener
 import org.gradle.internal.progress.BuildOperationListenerManager
 import org.gradle.internal.progress.DefaultBuildOperationListenerManager
 import org.gradle.internal.progress.OperationFinishEvent
+import org.gradle.internal.time.Timestamp
 import org.gradle.testing.internal.util.Specification
 
 class BuildOperationNotificationBridgeTest extends Specification {
@@ -82,7 +83,7 @@ class BuildOperationNotificationBridgeTest extends Specification {
         }
 
         when:
-        broadcast.finished(d1, new OperationFinishEvent(-1, -1, null, 10))
+        broadcast.finished(d1, new OperationFinishEvent(new Timestamp(-1, 0), new Timestamp(-1, 1), null, 10))
 
         then:
         1 * listener.finished(_) >> { BuildOperationFinishedNotification n ->
@@ -100,7 +101,7 @@ class BuildOperationNotificationBridgeTest extends Specification {
         0 * listener.started(_)
 
         when:
-        broadcast.finished(d2, new OperationFinishEvent(-1, -1, null, 10))
+        broadcast.finished(d2, new OperationFinishEvent(new Timestamp(-1, 0), new Timestamp(-1, 1), null, 10))
 
         then:
         0 * listener.finished(_)
@@ -116,7 +117,7 @@ class BuildOperationNotificationBridgeTest extends Specification {
         }
 
         when:
-        broadcast.finished(d3, new OperationFinishEvent(-1, -1, null, null))
+        broadcast.finished(d3, new OperationFinishEvent(new Timestamp(-1, 0), new Timestamp(-1, 1), null, null))
 
         then:
         1 * listener.finished(_) >> { BuildOperationFinishedNotification n ->
@@ -137,7 +138,7 @@ class BuildOperationNotificationBridgeTest extends Specification {
         }
 
         when:
-        broadcast.finished(d3, new OperationFinishEvent(-1, -1, e1, null))
+        broadcast.finished(d3, new OperationFinishEvent(new Timestamp(-1, 0), new Timestamp(-1, 1), e1, null))
 
         then:
         1 * listener.finished(_) >> { BuildOperationFinishedNotification n ->
@@ -168,20 +169,20 @@ class BuildOperationNotificationBridgeTest extends Specification {
         broadcast.started(d2, null)
 
         broadcast.started(d3, null)
-        broadcast.finished(d3, new OperationFinishEvent(-1, -1, null, null))
+        broadcast.finished(d3, new OperationFinishEvent(new Timestamp(-1, 0), new Timestamp(-1, 1), null, null))
 
         broadcast.started(d4, null)
         broadcast.started(d5, null)
         broadcast.started(d6, null)
         broadcast.started(d7, null)
 
-        broadcast.finished(d7, new OperationFinishEvent(-1, -1, null, null))
-        broadcast.finished(d6, new OperationFinishEvent(-1, -1, null, null))
-        broadcast.finished(d5, new OperationFinishEvent(-1, -1, null, null))
-        broadcast.finished(d4, new OperationFinishEvent(-1, -1, null, null))
+        broadcast.finished(d7, new OperationFinishEvent(new Timestamp(-1, 0), new Timestamp(-1, 1), null, null))
+        broadcast.finished(d6, new OperationFinishEvent(new Timestamp(-1, 0), new Timestamp(-1, 1), null, null))
+        broadcast.finished(d5, new OperationFinishEvent(new Timestamp(-1, 0), new Timestamp(-1, 1), null, null))
+        broadcast.finished(d4, new OperationFinishEvent(new Timestamp(-1, 0), new Timestamp(-1, 1), null, null))
 
-        broadcast.finished(d2, new OperationFinishEvent(-1, -1, null, null))
-        broadcast.finished(d1, new OperationFinishEvent(-1, -1, null, null))
+        broadcast.finished(d2, new OperationFinishEvent(new Timestamp(-1, 0), new Timestamp(-1, 1), null, null))
+        broadcast.finished(d1, new OperationFinishEvent(new Timestamp(-1, 0), new Timestamp(-1, 1), null, null))
 
         then:
         1 * listener.started(_) >> { BuildOperationStartedNotification n ->

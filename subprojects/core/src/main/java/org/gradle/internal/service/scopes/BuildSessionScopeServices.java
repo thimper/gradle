@@ -79,6 +79,8 @@ import org.gradle.internal.serialize.HashCodeSerializer;
 import org.gradle.internal.service.DefaultServiceRegistry;
 import org.gradle.internal.service.ServiceRegistration;
 import org.gradle.internal.service.ServiceRegistry;
+import org.gradle.internal.time.DefaultEventClock;
+import org.gradle.internal.time.EventClock;
 import org.gradle.internal.time.TimeProvider;
 import org.gradle.internal.work.AsyncWorkTracker;
 import org.gradle.internal.work.DefaultAsyncWorkTracker;
@@ -128,9 +130,12 @@ public class BuildSessionScopeServices extends DefaultServiceRegistry {
         return new BuildOperationTrace(startParameter, listenerManager);
     }
 
+    EventClock createEventClock(TimeProvider timeProvider){
+        return new DefaultEventClock(timeProvider);
+    }
     BuildOperationExecutor createBuildOperationExecutor(
         ListenerManager listenerManager,
-        TimeProvider timeProvider,
+        EventClock eventClock,
         ProgressLoggerFactory progressLoggerFactory,
         WorkerLeaseService workerLeaseService,
         ExecutorFactory executorFactory,
@@ -140,7 +145,7 @@ public class BuildSessionScopeServices extends DefaultServiceRegistry {
     ) {
         return new DefaultBuildOperationExecutor(
             listenerManager.getBroadcaster(BuildOperationListener.class),
-            timeProvider, progressLoggerFactory,
+            eventClock, progressLoggerFactory,
             new DefaultBuildOperationQueueFactory(workerLeaseService),
             executorFactory,
             resourceLockCoordinationService,

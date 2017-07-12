@@ -40,12 +40,12 @@ class ClientForwardingBuildOperationListener implements BuildOperationListener {
 
     @Override
     public void started(BuildOperationDescriptor buildOperation, OperationStartEvent startEvent) {
-        eventConsumer.dispatch(new DefaultOperationStartedProgressEvent(startEvent.getStartTime(), toBuildOperationDescriptor(buildOperation)));
+        eventConsumer.dispatch(new DefaultOperationStartedProgressEvent(startEvent.getStartTime().normalized, toBuildOperationDescriptor(buildOperation)));
     }
 
     @Override
     public void finished(BuildOperationDescriptor buildOperation, OperationFinishEvent result) {
-        eventConsumer.dispatch(new DefaultOperationFinishedProgressEvent(result.getEndTime(), toBuildOperationDescriptor(buildOperation), adaptResult(result)));
+        eventConsumer.dispatch(new DefaultOperationFinishedProgressEvent(result.getEndTime().normalized, toBuildOperationDescriptor(buildOperation), adaptResult(result)));
     }
 
     private DefaultOperationDescriptor toBuildOperationDescriptor(BuildOperationDescriptor buildOperation) {
@@ -58,8 +58,8 @@ class ClientForwardingBuildOperationListener implements BuildOperationListener {
 
     private AbstractOperationResult adaptResult(OperationFinishEvent result) {
         Throwable failure = result.getFailure();
-        long startTime = result.getStartTime();
-        long endTime = result.getEndTime();
+        long startTime = result.getStartTime().normalized;
+        long endTime = result.getEndTime().normalized;
         if (failure != null) {
             return new DefaultFailureResult(startTime, endTime, Collections.singletonList(DefaultFailure.fromThrowable(failure)));
         }

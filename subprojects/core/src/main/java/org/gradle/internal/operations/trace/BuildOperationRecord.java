@@ -18,6 +18,7 @@ package org.gradle.internal.operations.trace;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import org.gradle.internal.time.Timestamp;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,8 +29,8 @@ public final class BuildOperationRecord {
     public final Object id;
     public final Object parentId;
     public final String displayName;
-    public final long startTime;
-    public final long endTime;
+    public final Timestamp startTime;
+    public final Timestamp endTime;
     public final Map<String, ?> details;
     private final String detailsClassName;
     public final Map<String, ?> result;
@@ -42,8 +43,8 @@ public final class BuildOperationRecord {
         Object id,
         Object parentId,
         String displayName,
-        long startTime,
-        long endTime,
+        Timestamp startTime,
+        Timestamp endTime,
         Map<String, ?> details,
         String detailsClassName,
         Map<String, ?> result,
@@ -76,7 +77,7 @@ public final class BuildOperationRecord {
 
         map.put("startTime", startTime);
         map.put("endTime", endTime);
-        map.put("duration", endTime - startTime);
+        map.put("duration", endTime.normalized - startTime.normalized);
 
         if (details != null) {
             map.put("details", details);

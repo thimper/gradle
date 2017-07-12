@@ -19,12 +19,11 @@ package org.gradle.nativeplatform.toolchain.internal
 import org.gradle.api.Action
 import org.gradle.api.internal.file.BaseDirFileResolver
 import org.gradle.api.internal.file.TestFiles
-import org.gradle.internal.concurrent.ParallelismConfigurationManagerFixture
-import org.gradle.test.fixtures.work.TestWorkerLeaseService
-import org.gradle.internal.concurrent.DefaultParallelismConfiguration
 import org.gradle.internal.concurrent.DefaultExecutorFactory
+import org.gradle.internal.concurrent.DefaultParallelismConfiguration
 import org.gradle.internal.concurrent.GradleThread
 import org.gradle.internal.concurrent.ParallelismConfigurationManager
+import org.gradle.internal.concurrent.ParallelismConfigurationManagerFixture
 import org.gradle.internal.operations.BuildOperationExecutor
 import org.gradle.internal.operations.DefaultBuildOperationQueueFactory
 import org.gradle.internal.operations.logging.BuildOperationLogger
@@ -32,10 +31,11 @@ import org.gradle.internal.progress.BuildOperationListener
 import org.gradle.internal.progress.DefaultBuildOperationExecutor
 import org.gradle.internal.progress.NoOpProgressLoggerFactory
 import org.gradle.internal.resources.ResourceLockCoordinationService
-import org.gradle.internal.time.TimeProvider
+import org.gradle.internal.time.EventClock
 import org.gradle.internal.work.WorkerLeaseService
 import org.gradle.nativeplatform.internal.CompilerOutputFileNamingSchemeFactory
 import org.gradle.test.fixtures.file.TestNameTestDirectoryProvider
+import org.gradle.test.fixtures.work.TestWorkerLeaseService
 import org.junit.Rule
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -62,9 +62,9 @@ abstract class NativeCompilerTest extends Specification {
     ResourceLockCoordinationService resourceLockCoordinationService = Stub(ResourceLockCoordinationService)
 
     private BuildOperationListener buildOperationListener = Mock(BuildOperationListener)
-    private TimeProvider timeProvider = Mock(TimeProvider)
+    private EventClock eventClock = Mock(EventClock)
     ParallelismConfigurationManager parallelExecutionManager = new ParallelismConfigurationManagerFixture(DefaultParallelismConfiguration.DEFAULT)
-    protected BuildOperationExecutor buildOperationExecutor = new DefaultBuildOperationExecutor(buildOperationListener, timeProvider, new NoOpProgressLoggerFactory(),
+    protected BuildOperationExecutor buildOperationExecutor = new DefaultBuildOperationExecutor(buildOperationListener, eventClock, new NoOpProgressLoggerFactory(),
         new DefaultBuildOperationQueueFactory(workerLeaseService), new DefaultExecutorFactory(), resourceLockCoordinationService, parallelExecutionManager)
 
     def setup() {
@@ -172,7 +172,7 @@ abstract class NativeCompilerTest extends Specification {
         sourceFiles.each{ sourceFile ->
             1 * commandLineTool.execute(_, _)
         }
-        4 * timeProvider.getCurrentTime()
+        4 * eventClock.timestamp()
         2 * buildOperationListener.started(_, _)
         2 * buildOperationListener.finished(_, _)
         0 * _

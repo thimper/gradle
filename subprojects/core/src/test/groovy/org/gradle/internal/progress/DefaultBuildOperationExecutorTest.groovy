@@ -27,17 +27,18 @@ import org.gradle.internal.operations.RunnableBuildOperation
 import org.gradle.internal.resources.ResourceDeadlockException
 import org.gradle.internal.resources.ResourceLockCoordinationService
 import org.gradle.internal.resources.ResourceLockState
-import org.gradle.internal.time.TimeProvider
+import org.gradle.internal.time.EventClock
+import org.gradle.internal.time.Timestamp
 import org.gradle.test.fixtures.concurrent.ConcurrentSpec
 
 import static org.gradle.internal.progress.BuildOperationDescriptor.displayName
 
 class DefaultBuildOperationExecutorTest extends ConcurrentSpec {
     def listener = Mock(BuildOperationListener)
-    def timeProvider = Mock(TimeProvider)
+    def eventClock = Mock(EventClock)
     def progressLoggerFactory = Spy(NoOpProgressLoggerFactory)
     def resourceLockCoordinator = Mock(ResourceLockCoordinationService)
-    def operationExecutor = new DefaultBuildOperationExecutor(listener, timeProvider, progressLoggerFactory, Mock(BuildOperationQueueFactory), Mock(ExecutorFactory), resourceLockCoordinator, new ParallelismConfigurationManagerFixture(true, 1))
+    def operationExecutor = new DefaultBuildOperationExecutor(listener, eventClock, progressLoggerFactory, Mock(BuildOperationQueueFactory), Mock(ExecutorFactory), resourceLockCoordinator, new ParallelismConfigurationManagerFixture(true, 1))
 
     def "fires events when operation starts and finishes successfully"() {
         setup:
@@ -58,7 +59,7 @@ class DefaultBuildOperationExecutorTest extends ConcurrentSpec {
 
         then:
         1 * buildOperation.description() >> operationDetailsBuilder
-        1 * timeProvider.currentTime >> 123L
+        1 * eventClock.timestamp() >> new Timestamp(123L, 1)
         1 * listener.started(_, _) >> { BuildOperationDescriptor operation, OperationStartEvent start ->
             id = operation.id
             assert operation.id != null
@@ -66,7 +67,7 @@ class DefaultBuildOperationExecutorTest extends ConcurrentSpec {
             assert operation.name == "<op>"
             assert operation.displayName == "<some-operation>"
             assert operation.details == details
-            assert start.startTime == 123L
+            assert start.startTime.normalized == 123L
         }
 
         then:
@@ -80,15 +81,15 @@ class DefaultBuildOperationExecutorTest extends ConcurrentSpec {
         1 * progressLogger.completed(null)
 
         then:
-        1 * timeProvider.currentTime >> 124L
+        1 * eventClock.timestamp() >> new Timestamp(124L, 2)
         1 * listener.finished(_, _) >> { BuildOperationDescriptor operation, OperationFinishEvent opResult ->
             assert operation.parentId == null
             assert operation.id == id
             assert operation.name == "<op>"
             assert operation.displayName == "<some-operation>"
             assert operation.details == details
-            assert opResult.startTime == 123L
-            assert opResult.endTime == 124L
+            assert opResult.startTime.normalized == 123L
+            assert opResult.endTime.normalized == 124L
             assert opResult.failure == null
         }
 
@@ -116,13 +117,13 @@ class DefaultBuildOperationExecutorTest extends ConcurrentSpec {
 
         then:
         1 * buildOperation.description() >> operationDescriptionBuilder
-        1 * timeProvider.currentTime >> 123L
+        1 * eventClock.timestamp() >> new Timestamp(123L, 0)
         1 * listener.started(_, _) >> { BuildOperationDescriptor operation, OperationStartEvent start ->
             assert operation.id != null
             id = operation.id
             assert operation.parentId == null
             assert operation.displayName == "<some-operation>"
-            assert start.startTime == 123L
+            assert start.startTime.normalized == 123L
         }
 
         then:
@@ -136,11 +137,11 @@ class DefaultBuildOperationExecutorTest extends ConcurrentSpec {
         1 * progressLogger.completed(null)
 
         then:
-        1 * timeProvider.currentTime >> 124L
+        1 * eventClock.timestamp() >> new Timestamp(124L, 1)
         1 * listener.finished(_, _) >> { BuildOperationDescriptor operation, OperationFinishEvent opResult ->
             assert operation.id == id
-            assert opResult.startTime == 123L
-            assert opResult.endTime == 124L
+            assert opResult.startTime.normalized == 123L
+            assert opResult.endTime.normalized == 124L
             assert opResult.failure == failure
         }
 

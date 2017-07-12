@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package org.gradle.internal.progress;
+package org.gradle.internal.time;
 
-import org.gradle.internal.time.Timestamp;
+public interface EventClock {
 
-public final class OperationStartEvent {
-    private final Timestamp startTime;
+    Timestamp timestamp();
+    Timestamp timestampProvided(long actualTimeMillis);
+    Timestamp timestampPreClockEpochWallTime(long actualTimeMillis);
 
-    public OperationStartEvent(Timestamp startTime) {
-        this.startTime = startTime;
-    }
-
-    public Timestamp getStartTime() {
-        return startTime;
-    }
 }

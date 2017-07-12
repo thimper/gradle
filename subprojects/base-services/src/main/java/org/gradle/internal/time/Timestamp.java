@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-package org.gradle.internal.progress;
+package org.gradle.internal.time;
 
-import org.gradle.internal.time.Timestamp;
+public final class Timestamp {
 
-public final class OperationStartEvent {
-    private final Timestamp startTime;
+    public final long normalized;
+    public final Long actual;
+    public final int ordinal;
 
-    public OperationStartEvent(Timestamp startTime) {
-        this.startTime = startTime;
+    public Timestamp(long normalized, int ordinal) {
+        this.normalized = normalized;
+        this.actual = null;
+        this.ordinal = ordinal;
     }
 
-    public Timestamp getStartTime() {
-        return startTime;
+    public Timestamp(long normalized, long actual, int ordinal) {
+        this.normalized = normalized;
+        this.actual = actual;
+        this.ordinal = ordinal;
     }
+
 }

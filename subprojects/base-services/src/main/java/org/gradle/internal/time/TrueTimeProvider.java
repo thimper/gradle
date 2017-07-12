@@ -28,4 +28,9 @@ public class TrueTimeProvider implements TimeProvider {
     public long getCurrentTimeForDuration() {
         return TimeUnit.MILLISECONDS.convert(System.nanoTime(), TimeUnit.NANOSECONDS);
     }
+
+    @Override
+    public long getNanoTime() {
+        return System.nanoTime();
+    }
 }

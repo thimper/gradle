@@ -25,6 +25,7 @@ import org.gradle.api.tasks.testing.TestResult
 import org.gradle.internal.progress.BuildOperationDescriptor
 import org.gradle.internal.progress.BuildOperationCategory
 import org.gradle.internal.progress.OperationStartEvent
+import org.gradle.internal.time.Timestamp
 import org.gradle.tooling.internal.protocol.test.InternalJvmTestRequest
 import org.gradle.tooling.internal.provider.TestExecutionRequestAction
 import org.gradle.tooling.internal.provider.events.DefaultTestDescriptor
@@ -94,7 +95,7 @@ class TestExecutionResultEvaluatorTest extends Specification {
         def buildOperation = new BuildOperationDescriptor(1, 2, "<task>", "<task>",  "<task>", new ExecuteTaskBuildOperationDetails(testTask), BuildOperationCategory.TASK)
 
         when:
-        evaluator.started(buildOperation, new OperationStartEvent(0))
+        evaluator.started(buildOperation, new OperationStartEvent(new Timestamp(0, 0)))
         evaluator.completed(testDescriptorInternal, testResult, Mock(TestCompleteEvent))
         evaluator.evaluate()
 
