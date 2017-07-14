@@ -54,6 +54,7 @@ import org.gradle.process.ExecResult;
 import org.gradle.process.ExecSpec;
 import org.gradle.process.JavaExecSpec;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.net.URI;
@@ -249,6 +250,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return The root project. Never returns null.
      */
+    @Nonnull
     Project getRootProject();
 
     /**
@@ -257,6 +259,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return The root directory. Never returns null.
      */
+    @Nonnull
     File getRootDir();
 
     /**
@@ -265,6 +268,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return The build directory. Never returns null.
      */
+    @Nonnull
     File getBuildDir();
 
     /**
@@ -307,11 +311,13 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return The name of this project. Never return null.
      */
+    @Nonnull
     String getName();
 
     /**
      * Returns a human-consumable display name for this project.
      */
+    @Nonnull
     String getDisplayName();
 
     /**
@@ -319,6 +325,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return the description. May return null.
      */
+    @Nullable
     String getDescription();
 
     /**
@@ -334,6 +341,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return The group of this project. Never returns null.
      */
+    @Nonnull
     Object getGroup();
 
     /**
@@ -349,6 +357,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return The version of this project. Never returns null.
      */
+    @Nonnull
     Object getVersion();
 
     /**
@@ -367,6 +376,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return The status of this project. Never returns null.
      */
+    @Nonnull
     Object getStatus();
 
     /**
@@ -382,6 +392,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @return A map from child project name to child project. Returns an empty map if this project does not have
      *         any children.
      */
+    @Nonnull
     Map<String, Project> getChildProjects();
 
     /**
@@ -414,6 +425,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return This project. Never returns null.
      */
+    @Nonnull
     Project getProject();
 
     /**
@@ -421,6 +433,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return The set of projects.
      */
+    @Nonnull
     Set<Project> getAllprojects();
 
     /**
@@ -428,6 +441,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return The set of projects.  Returns an empty set if this project has no subprojects.
      */
+    @Nonnull
     Set<Project> getSubprojects();
 
     /**
@@ -443,6 +457,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @return The newly created task object
      * @throws InvalidUserDataException If a task with the given name already exists in this project.
      */
+    @Nonnull
     Task task(String name) throws InvalidUserDataException;
 
     /**
@@ -485,6 +500,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @return The newly created task object
      * @throws InvalidUserDataException If a task with the given name already exists in this project.
      */
+    @Nonnull
     Task task(Map<String, ?> args, String name) throws InvalidUserDataException;
 
     /**
@@ -504,6 +520,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @return The newly created task object
      * @throws InvalidUserDataException If a task with the given name already exists in this project.
      */
+    @Nonnull
     Task task(Map<String, ?> args, String name, @DelegatesTo(value = Task.class, strategy = Closure.DELEGATE_FIRST) @ClosureParams(ReturnType.class) Closure configureClosure);
 
     /**
@@ -517,6 +534,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @return The newly created task object
      * @throws InvalidUserDataException If a task with the given name already exists in this project.
      */
+    @Nonnull
     Task task(String name, @DelegatesTo(value = Task.class, strategy = Closure.DELEGATE_FIRST) @ClosureParams(ReturnType.class) Closure configureClosure);
 
     /**
@@ -524,6 +542,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return The path. Never returns null.
      */
+    @Nonnull
     String getPath();
 
     /**
@@ -532,6 +551,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return The default task names. Returns an empty list if this project has no default tasks.
      */
+    @Nonnull
     List<String> getDefaultTasks();
 
     /**
@@ -557,6 +577,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @return The project which this project depends on.
      * @throws UnknownProjectException If no project with the given path exists.
      */
+    @Nonnull
     Project evaluationDependsOn(String path) throws UnknownProjectException;
 
     /**
@@ -571,6 +592,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param path The path.
      * @return The project with the given path. Returns null if no such project exists.
      */
+    @Nullable
     Project findProject(String path);
 
     /**
@@ -580,6 +602,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @return The project with the given path. Never returns null.
      * @throws UnknownProjectException If no project with the given path exists.
      */
+    @Nonnull
     Project project(String path) throws UnknownProjectException;
 
     /**
@@ -591,6 +614,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @return The project with the given path. Never returns null.
      * @throws UnknownProjectException If no project with the given path exists.
      */
+    @Nonnull
     Project project(String path, @DelegatesTo(value = Project.class, strategy = Closure.DELEGATE_FIRST) @ClosureParams(ReturnType.class) Closure configureClosure);
 
     /**
@@ -604,6 +628,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @since 3.4
      */
+    @Nonnull
     Project project(String path, Action<? super Project> configureAction);
 
     /**
@@ -613,6 +638,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * just this project.
      * @return A map from project to a set of tasks.
      */
+    @Nonnull
     Map<Project, Set<Task>> getAllTasks(boolean recursive);
 
     /**
@@ -623,6 +649,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * just this project.
      * @return The set of tasks. Returns an empty set if no such tasks exist in this project.
      */
+    @Nonnull
     Set<Task> getTasksByName(String name, boolean recursive);
 
     /**
@@ -630,6 +657,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return The project directory. Never returns null.
      */
+    @Nonnull
     File getProjectDir();
 
     /**
@@ -662,6 +690,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param path The object to resolve as a File.
      * @return The resolved file. Never returns null.
      */
+    @Nonnull
     File file(Object path);
 
     /**
@@ -673,6 +702,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @return The resolved file. Never returns null.
      * @throws InvalidUserDataException When the file does not meet the given validation constraint.
      */
+    @Nonnull
     File file(Object path, PathValidation validation) throws InvalidUserDataException;
 
     /**
@@ -683,6 +713,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param path The object to resolve as a URI.
      * @return The resolved URI. Never returns null.
      */
+    @Nonnull
     URI uri(Object path);
 
     /**
@@ -692,6 +723,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param path The path to convert to a relative path.
      * @return The relative path. Never returns null.
      */
+    @Nonnull
     String relativePath(Object path);
 
     /**
@@ -735,6 +767,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param paths The paths to the files. May be empty.
      * @return The file collection. Never returns null.
      */
+    @Nonnull
     ConfigurableFileCollection files(Object... paths);
 
     /**
@@ -754,6 +787,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param configureClosure The closure to use to configure the file collection.
      * @return the configured file tree. Never returns null.
      */
+    @Nonnull
     ConfigurableFileCollection files(Object paths, @DelegatesTo(value = ConfigurableFileCollection.class, strategy = Closure.DELEGATE_FIRST) @ClosureParams(ReturnType.class) Closure configureClosure);
 
     /**
@@ -773,6 +807,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @return the configured file tree. Never returns null.
      * @since 3.5
      */
+    @Nonnull
     ConfigurableFileCollection files(Object paths, Action<? super ConfigurableFileCollection> configureAction);
 
     /**
@@ -796,6 +831,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param baseDir The base directory of the file tree. Evaluated as per {@link #file(Object)}.
      * @return the file tree. Never returns null.
      */
+    @Nonnull
     ConfigurableFileTree fileTree(Object baseDir);
 
     /**
@@ -822,6 +858,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param configureClosure Closure to configure the {@code ConfigurableFileTree} object.
      * @return the configured file tree. Never returns null.
      */
+    @Nonnull
     ConfigurableFileTree fileTree(Object baseDir, @DelegatesTo(value = ConfigurableFileTree.class, strategy = Closure.DELEGATE_FIRST) @ClosureParams(ReturnType.class) Closure configureClosure);
 
     /**
@@ -848,6 +885,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @return the configured file tree. Never returns null.
      * @since 3.5
      */
+    @Nonnull
     ConfigurableFileTree fileTree(Object baseDir, Action<? super ConfigurableFileTree> configureAction);
 
     /**
@@ -869,6 +907,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param args map of property assignments to {@code ConfigurableFileTree} object
      * @return the configured file tree. Never returns null.
      */
+    @Nonnull
     ConfigurableFileTree fileTree(Map<String, ?> args);
 
     /**
@@ -883,6 +922,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param zipPath The ZIP file. Evaluated as per {@link #file(Object)}.
      * @return the file tree. Never returns null.
      */
+    @Nonnull
     FileTree zipTree(Object zipPath);
 
     /**
@@ -920,6 +960,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param tarPath The TAR file or an instance of {@link org.gradle.api.resources.Resource}.
      * @return the file tree. Never returns null.
      */
+    @Nonnull
     FileTree tarTree(Object tarPath);
 
     /**
@@ -932,6 +973,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @since 4.0
      */
     @Incubating
+    @Nonnull
     <T> Provider<T> provider(Callable<T> value);
 
     /**
@@ -944,6 +986,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @since 4.0
      */
     @Incubating
+    @Nonnull
     <T> PropertyState<T> property(Class<T> clazz);
 
     /**
@@ -952,6 +995,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @since 4.0
      */
     @Incubating
+    @Nonnull
     ProviderFactory getProviders();
 
     /**
@@ -960,6 +1004,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @since 4.0
      */
     @Incubating
+    @Nonnull
     ObjectFactory getObjects();
 
     /**
@@ -968,6 +1013,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @since 4.1
      */
     @Incubating
+    @Nonnull
     ProjectLayout getLayout();
 
     /**
@@ -977,6 +1023,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @return the created directory
      * @throws org.gradle.api.InvalidUserDataException If the path points to an existing file.
      */
+    @Nonnull
     File mkdir(Object path);
 
     /**
@@ -1003,6 +1050,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param action Action to configure the DeleteSpec
      * @return {@link WorkResult} that can be used to check if delete did any work.
      */
+    @Nonnull
     WorkResult delete(Action<? super DeleteSpec> action);
 
     /**
@@ -1011,6 +1059,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param closure The closure for configuring the execution.
      * @return the result of the execution
      */
+    @Nonnull
     ExecResult javaexec(@DelegatesTo(value = JavaExecSpec.class, strategy = Closure.DELEGATE_FIRST) @ClosureParams(value = SimpleType.class, options = {"org.gradle.process.JavaExecSpec"}) Closure closure);
 
     /**
@@ -1022,6 +1071,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param action The action for configuring the execution.
      * @return the result of the execution
      */
+    @Nonnull
     ExecResult javaexec(Action<? super JavaExecSpec> action);
 
     /**
@@ -1030,6 +1080,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param closure The closure for configuring the execution.
      * @return the result of the execution
      */
+    @Nonnull
     ExecResult exec(@DelegatesTo(value = ExecSpec.class, strategy = Closure.DELEGATE_FIRST) @ClosureParams(value = SimpleType.class, options = {"org.gradle.process.ExecSpec"}) Closure closure);
 
     /**
@@ -1041,6 +1092,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param action The action for configuring the execution.
      * @return the result of the execution
      */
+    @Nonnull
     ExecResult exec(Action<? super ExecSpec> action);
 
     /**
@@ -1049,6 +1101,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param path The path to convert.
      * @return The absolute path.
      */
+    @Nonnull
     String absoluteProjectPath(String path);
 
     /**
@@ -1057,6 +1110,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param path The path to convert.
      * @return The relative path.
      */
+    @Nonnull
     String relativeProjectPath(String path);
 
     /**
@@ -1109,6 +1163,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return The <code>AntBuilder</code> for this project. Never returns null.
      */
+    @Nonnull
     AntBuilder getAnt();
 
     /**
@@ -1118,6 +1173,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @return Creates an <code>AntBuilder</code> for this project. Never returns null.
      * @see #getAnt()
      */
+    @Nonnull
     AntBuilder createAntBuilder();
 
     /**
@@ -1128,6 +1184,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param configureClosure The closure to execute against the <code>AntBuilder</code>.
      * @return The <code>AntBuilder</code>. Never returns null.
      */
+    @Nonnull
     AntBuilder ant(@DelegatesTo(value = AntBuilder.class, strategy = Closure.DELEGATE_FIRST) @ClosureParams(ReturnType.class) Closure configureClosure);
 
     /**
@@ -1138,6 +1195,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @return The <code>AntBuilder</code>. Never returns null.
      * @since 3.5
      */
+    @Nonnull
     AntBuilder ant(Action<? super AntBuilder> configureAction);
 
     /**
@@ -1147,6 +1205,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return The configuration of this project.
      */
+    @Nonnull
     ConfigurationContainer getConfigurations();
 
     /**
@@ -1165,6 +1224,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * Returns a handler for assigning artifacts produced by the project to configurations.
      * <h3>Examples:</h3>See docs for {@link ArtifactHandler}
      */
+    @Nonnull
     ArtifactHandler getArtifacts();
 
     /**
@@ -1230,6 +1290,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return The <code>Convention</code>. Never returns null.
      */
+    @Nonnull
     Convention getConvention();
 
     /**
@@ -1253,6 +1314,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return the tasks of this project.
      */
+    @Nonnull
     TaskContainer getTasks();
 
     /**
@@ -1341,6 +1403,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return A map from property name to value.
      */
+    @Nonnull
     Map<String, ?> getProperties();
 
     /**
@@ -1371,6 +1434,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @throws MissingPropertyException When the given property is unknown.
      * @see Project#findProperty(String)
      */
+    @Nullable
     Object property(String propertyName) throws MissingPropertyException;
 
     /**
@@ -1410,6 +1474,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return The logger. Never returns null.
      */
+    @Nonnull
     Logger getLogger();
 
     /**
@@ -1417,6 +1482,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return The Gradle object. Never returns null.
      */
+    @Nonnull
     Gradle getGradle();
 
     /**
@@ -1426,6 +1492,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return the LoggingManager. Never returns null.
      */
+    @Nonnull
     LoggingManager getLogging();
 
     /**
@@ -1481,6 +1548,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return the repository handler. Never returns null.
      */
+    @Nonnull
     RepositoryHandler getRepositories();
 
     /**
@@ -1503,6 +1571,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @return the dependency handler. Never returns null.
      * @see #getConfigurations()
      */
+    @Nonnull
     DependencyHandler getDependencies();
 
     /**
@@ -1524,6 +1593,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return the classpath handler. Never returns null.
      */
+    @Nonnull
     ScriptHandler getBuildscript();
 
     /**
@@ -1563,6 +1633,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param closure Closure to configure the CopySpec
      * @return {@link WorkResult} that can be used to check if the copy did any work.
      */
+    @Nonnull
     WorkResult copy(@DelegatesTo(value = CopySpec.class, strategy = Closure.DELEGATE_FIRST) @ClosureParams(value = SimpleType.class, options = {"org.gradle.api.file.CopySpec"}) Closure closure);
 
     /**
@@ -1572,6 +1643,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param action Action to configure the CopySpec
      * @return {@link WorkResult} that can be used to check if the copy did any work.
      */
+    @Nonnull
     WorkResult copy(Action<? super CopySpec> action);
 
     /**
@@ -1593,6 +1665,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param closure Closure to configure the CopySpec
      * @return The CopySpec
      */
+    @Nonnull
     CopySpec copySpec(@DelegatesTo(value = CopySpec.class, strategy = Closure.DELEGATE_FIRST) @ClosureParams(value = SimpleType.class, options = {"org.gradle.api.file.CopySpec"}) Closure closure);
 
     /**
@@ -1603,6 +1676,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param action Action to configure the CopySpec
      * @return The CopySpec
      */
+    @Nonnull
     CopySpec copySpec(Action<? super CopySpec> action);
 
     /**
@@ -1610,6 +1684,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return a newly created copy spec
      */
+    @Nonnull
     CopySpec copySpec();
 
     /**
@@ -1646,6 +1721,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @since 4.0
      * @return {@link WorkResult} that can be used to check if the sync did any work.
      */
+    @Nonnull
     WorkResult sync(Action<? super CopySpec> action);
 
     /**
@@ -1654,6 +1730,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return the project state. Never returns null.
      */
+    @Nonnull
     ProjectState getState();
 
     /**
@@ -1665,6 +1742,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param <T> The type of objects for the container to contain.
      * @return The container.
      */
+    @Nonnull
     <T> NamedDomainObjectContainer<T> container(Class<T> type);
 
     /**
@@ -1677,6 +1755,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param <T> The type of objects for the container to contain.
      * @return The container.
      */
+    @Nonnull
     <T> NamedDomainObjectContainer<T> container(Class<T> type, NamedDomainObjectFactory<T> factory);
 
     /**
@@ -1690,6 +1769,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      * @param <T> The type of objects for the container to contain.
      * @return The container.
      */
+    @Nonnull
     <T> NamedDomainObjectContainer<T> container(Class<T> type, @ClosureParams(value = SimpleType.class, options = {"java.lang.String"}) Closure factoryClosure);
 
     /**
@@ -1697,6 +1777,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return Returned instance allows adding DSL extensions to the project
      */
+    @Nonnull
     ExtensionContainer getExtensions();
 
     /**
@@ -1704,6 +1785,7 @@ public interface Project extends Comparable<Project>, ExtensionAware, PluginAwar
      *
      * @return Returned instance contains various resource-specific utility methods.
      */
+    @Nonnull
     ResourceHandler getResources();
 
     /**
