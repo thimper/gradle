@@ -35,6 +35,7 @@ import org.gradle.api.artifacts.ExcludeRule;
 import org.gradle.api.artifacts.FileCollectionDependency;
 import org.gradle.api.artifacts.PublishArtifact;
 import org.gradle.api.artifacts.PublishArtifactSet;
+import org.gradle.api.artifacts.failures.ResolutionFailure;
 import org.gradle.api.artifacts.ResolutionStrategy;
 import org.gradle.api.artifacts.ResolvableDependencies;
 import org.gradle.api.artifacts.ResolveException;
@@ -1168,6 +1169,7 @@ public class DefaultConfiguration extends AbstractFileCollection implements Conf
         private final boolean lenient;
         private Set<ResolvedArtifactResult> artifactResults;
         private Set<Throwable> failures;
+        private Set<ResolutionFailure<?>> resolutionFailures;
 
         ConfigurationArtifactCollection() {
             this(configurationAttributes, Specs.<ComponentIdentifier>satisfyAll(), false, false);
@@ -1204,6 +1206,12 @@ public class DefaultConfiguration extends AbstractFileCollection implements Conf
             return failures;
         }
 
+        @Override
+        public Collection<ResolutionFailure<?>> getResolutionFailures() {
+            ensureResolved();
+            return resolutionFailures;
+        }
+
         private synchronized void ensureResolved() {
             if (artifactResults != null) {
                 return;
@@ -1214,6 +1222,7 @@ public class DefaultConfiguration extends AbstractFileCollection implements Conf
 
             artifactResults = visitor.getArtifacts();
             failures = visitor.getFailures();
+            resolutionFailures = visitor.getResolutionFailures();
 
             if (!lenient) {
                 rethrowFailure("artifacts", failures);
