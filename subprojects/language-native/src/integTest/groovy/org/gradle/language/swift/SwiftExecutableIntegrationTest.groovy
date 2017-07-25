@@ -40,7 +40,7 @@ class SwiftExecutableIntegrationTest extends AbstractInstalledToolChainIntegrati
         expect:
         fails "assemble"
         failure.assertHasDescription("Execution failed for task ':compileSwift'.");
-        failure.assertHasCause("A build operation failed.")
+        failure.assertThatCause(containsText("A build operation failed."))
         failure.assertThatCause(containsText("Swift compiler failed while compiling swift file(s)"))
     }
 

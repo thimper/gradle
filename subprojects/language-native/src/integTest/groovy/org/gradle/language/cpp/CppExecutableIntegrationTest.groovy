@@ -46,7 +46,7 @@ class CppExecutableIntegrationTest extends AbstractInstalledToolChainIntegration
         expect:
         fails "assemble"
         failure.assertHasDescription("Execution failed for task ':compileCpp'.");
-        failure.assertHasCause("A build operation failed.")
+        failure.assertThatCause(containsText("A build operation failed."))
         failure.assertThatCause(containsText("C++ compiler failed while compiling broken.cpp"))
     }
 

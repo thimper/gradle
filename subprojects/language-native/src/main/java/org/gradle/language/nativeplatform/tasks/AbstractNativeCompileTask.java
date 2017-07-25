@@ -33,8 +33,13 @@ import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.WorkResult;
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs;
 import org.gradle.internal.Cast;
+import org.gradle.internal.UncheckedException;
+import org.gradle.internal.concurrent.ExecutorFactory;
+import org.gradle.internal.operations.BuildOperationExecutor;
 import org.gradle.internal.operations.logging.BuildOperationLogger;
 import org.gradle.internal.operations.logging.BuildOperationLoggerFactory;
+import org.gradle.internal.work.AsyncWorkCompletion;
+import org.gradle.internal.work.AsyncWorkTracker;
 import org.gradle.language.base.internal.compile.Compiler;
 import org.gradle.language.nativeplatform.internal.incremental.IncrementalCompilerBuilder;
 import org.gradle.nativeplatform.internal.BuildOperationLoggingCompilerDecorator;
@@ -52,6 +57,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 /**
  * Compiles native source files into object files.
@@ -91,6 +98,21 @@ public abstract class AbstractNativeCompileTask extends DefaultTask {
         throw new UnsupportedOperationException();
     }
 
+    @Inject
+    public AsyncWorkTracker getAsyncWorkTracker() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Inject
+    public BuildOperationExecutor getBuildOperationExecutor() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Inject
+    public ExecutorFactory getExecutorFactory() {
+        throw new UnsupportedOperationException();
+    }
+
     @TaskAction
     public void compile(IncrementalTaskInputs inputs) {
         BuildOperationLogger operationLogger = getOperationLoggerFactory().newOperationLogger(getName(), getTemporaryDir());
@@ -110,18 +132,42 @@ public abstract class AbstractNativeCompileTask extends DefaultTask {
         configureSpec(spec);
 
         PlatformToolProvider platformToolProvider = toolChain.select(targetPlatform);
-        setDidWork(doCompile(spec, platformToolProvider).getDidWork());
+
+        ExecutorService executorService = getExecutorFactory().create(getPath(), 1);
+        final Future<?> futureWorkResult = doCompile(executorService, spec, platformToolProvider);
+        getAsyncWorkTracker().registerWork(getBuildOperationExecutor().getCurrentOperation(), new AsyncWorkCompletion() {
+            @Override
+            public void waitForCompletion() {
+                try {
+                    futureWorkResult.get();
+                } catch (Exception e) {
+                    throw UncheckedException.throwAsUncheckedException(e);
+                }
+            }
+
+            @Override
+            public boolean isComplete() {
+                return futureWorkResult.isDone();
+            }
+        });
+        executorService.shutdown();
     }
 
     protected void configureSpec(NativeCompileSpec spec) {
     }
 
-    private <T extends NativeCompileSpec> WorkResult doCompile(T spec, PlatformToolProvider platformToolProvider) {
+    private <T extends NativeCompileSpec> Future<?> doCompile(ExecutorService executorService, final T spec, PlatformToolProvider platformToolProvider) {
         Class<T> specType = Cast.uncheckedCast(spec.getClass());
         Compiler<T> baseCompiler = platformToolProvider.newCompiler(specType);
         Compiler<T> incrementalCompiler = getIncrementalCompilerBuilder().createIncrementalCompiler(this, baseCompiler, toolChain);
-        Compiler<T> loggingCompiler = BuildOperationLoggingCompilerDecorator.wrap(incrementalCompiler);
-        return loggingCompiler.execute(spec);
+        final Compiler<T> loggingCompiler = BuildOperationLoggingCompilerDecorator.wrap(incrementalCompiler);
+        return executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                WorkResult result = loggingCompiler.execute(spec);
+                setDidWork(result.getDidWork());
+            }
+        });
     }
 
     protected abstract NativeCompileSpec createCompileSpec();

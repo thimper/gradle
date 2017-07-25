@@ -16,7 +16,9 @@
 
 package org.gradle.language.nativeplatform
 
+import org.gradle.integtests.fixtures.BuildOperationsFixture
 import org.gradle.integtests.fixtures.executer.GradleContextualExecuter
+import org.gradle.internal.execution.ExecuteTaskBuildOperationType
 import org.gradle.nativeplatform.fixtures.AbstractInstalledToolChainIntegrationSpec
 import org.gradle.nativeplatform.fixtures.ExecutableFixture
 import org.gradle.nativeplatform.fixtures.NativeInstallationFixture
@@ -35,9 +37,10 @@ import spock.lang.IgnoreIf
 // no point, always runs in parallel
 class ParallelNativePluginsIntegrationTest extends AbstractInstalledToolChainIntegrationSpec {
 
+    def buildOperations = new BuildOperationsFixture(executer, temporaryFolder)
+
     def setup() {
-        executer.withArgument("--parallel")
-                .withArgument("--max-workers=4")
+        executer.withArgument("--max-workers=4")
     }
 
     @Requires(TestPrecondition.OBJECTIVE_C_SUPPORT)
@@ -77,6 +80,9 @@ class ParallelNativePluginsIntegrationTest extends AbstractInstalledToolChainInt
         executables.every { executable, app ->
             executable.exec().out == app.englishOutput
         }
+
+        and:
+        buildOperations.assertConcurrentOperationsExecuted(ExecuteTaskBuildOperationType)
     }
 
     @Requires(TestPrecondition.CAN_INSTALL_EXECUTABLE)
@@ -140,5 +146,8 @@ class ParallelNativePluginsIntegrationTest extends AbstractInstalledToolChainInt
         installations.every { installation, app ->
             installation.exec().out == app.englishOutput
         }
+
+        and:
+        buildOperations.assertConcurrentOperationsExecuted(ExecuteTaskBuildOperationType)
     }
 }

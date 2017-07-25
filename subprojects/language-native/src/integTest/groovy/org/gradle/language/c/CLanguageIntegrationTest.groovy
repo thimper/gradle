@@ -209,7 +209,7 @@ model {
         expect:
         fails "mainExecutable"
         failure.assertHasDescription("Execution failed for task ':compileMainExecutableMainC'.");
-        failure.assertHasCause("A build operation failed.")
+        failure.assertThatCause(containsText("A build operation failed."))
         failure.assertThatCause(containsText("C compiler failed while compiling broken.c"))
     }
 
@@ -236,7 +236,7 @@ model {
         expect:
         fails "mainExecutable"
         failure.assertHasDescription("Execution failed for task ':compileMainExecutableMainC'.");
-        failure.assertHasCause("Multiple build operations failed.")
+        failure.assertThatCause(containsText("Multiple build operations failed."))
         (1..brokenFileCount).each {
             failure.assertThatCause(containsText("C compiler failed while compiling broken${it}.c"))
         }

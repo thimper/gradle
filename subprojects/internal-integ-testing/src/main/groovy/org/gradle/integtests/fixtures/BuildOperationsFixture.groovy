@@ -187,6 +187,19 @@ class BuildOperationsFixture {
      * @param concurrencyExpected whether or not to expect _any_ concurrency
      */
     void assertConcurrentOperationsDoNotExceed(Class<BuildOperationType> type, int maximumConcurrentOperations, boolean concurrencyExpected=false) {
+        int maxConcurrency = getMaximumConcurentOperations(type)
+        assert maxConcurrency <= maximumConcurrentOperations
+        if (concurrencyExpected) {
+            assert maxConcurrency > 1 : "No operations were executed concurrently"
+        }
+    }
+
+    void assertConcurrentOperationsExecuted(Class<BuildOperationType> type) {
+        assert getMaximumConcurentOperations(type) > 1 : "No operations were executed concurrently"
+    }
+
+    int getMaximumConcurentOperations(Class<BuildOperationType> type) {
+        def highWaterPoint = 0
         def allOperations = all(type)
 
         List<TimePoint> points = []
@@ -196,7 +209,6 @@ class BuildOperationsFixture {
             points.add(new TimePoint(it, it.endTime, true))
         }
 
-        def concurrencySeen = false
         def concurrentOperations = []
         points.sort().each {
             if (it.end) {
@@ -206,13 +218,10 @@ class BuildOperationsFixture {
                     concurrentOperations.add(it.operation)
                 }
             }
-            assert concurrentOperations.size() <= maximumConcurrentOperations
-            if (concurrentOperations.size() > 1) {
-                concurrencySeen = true
+            if (concurrentOperations.size() > highWaterPoint) {
+                highWaterPoint = concurrentOperations.size()
             }
         }
-        if (concurrencyExpected) {
-            assert concurrencySeen : "No operations were executed concurrently"
-        }
+        return highWaterPoint
     }
 }
