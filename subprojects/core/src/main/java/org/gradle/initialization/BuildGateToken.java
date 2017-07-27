@@ -17,5 +17,7 @@
 package org.gradle.initialization;
 
 public interface BuildGateToken {
-    boolean isGateOpen();
+    void block();
+    void release();
+    void waitForOpen();
 }

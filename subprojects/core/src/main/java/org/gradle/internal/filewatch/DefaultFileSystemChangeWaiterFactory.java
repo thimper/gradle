@@ -142,6 +142,7 @@ public class DefaultFileSystemChangeWaiterFactory implements FileSystemChangeWai
                 if (throwable != null) {
                     throw throwable;
                 }
+                buildGateToken.waitForOpen();
             } catch (Throwable e) {
                 throw UncheckedException.throwAsUncheckedException(e);
             } finally {
@@ -152,7 +153,7 @@ public class DefaultFileSystemChangeWaiterFactory implements FileSystemChangeWai
         }
 
         private boolean waitingForChanges(long lastChangeAtValue) {
-            return (!buildGateToken.isGateOpen()) || (error.get() == null && shouldKeepWaitingForQuietPeriod(lastChangeAtValue));
+            return error.get() == null && shouldKeepWaitingForQuietPeriod(lastChangeAtValue);
         }
 
         private void deliverEvent(FileWatcherEvent event) {

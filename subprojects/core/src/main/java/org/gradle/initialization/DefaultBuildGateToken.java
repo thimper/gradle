@@ -16,9 +16,40 @@
 
 package org.gradle.initialization;
 
+import org.gradle.internal.UncheckedException;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class DefaultBuildGateToken implements BuildGateToken {
+    private AtomicBoolean gate = new AtomicBoolean(true);
+
     @Override
-    public boolean isGateOpen() {
-        return true;
+    public void block() {
+        gate(false);
+    }
+
+    @Override
+    public void release() {
+        gate(true);
+    }
+
+    private void gate(boolean open) {
+        synchronized (gate) {
+            gate.set(open);
+            gate.notifyAll();
+        }
+    }
+
+    @Override
+    public void waitForOpen() {
+        synchronized (gate) {
+            try {
+                while (!gate.get()) {
+                    gate.wait();
+                }
+            } catch (InterruptedException e) {
+                throw UncheckedException.throwAsUncheckedException(e);
+            }
+        }
     }
 }
