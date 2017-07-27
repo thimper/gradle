@@ -16,6 +16,23 @@
             "member": "Implemented interface org.gradle.initialization.ParallelismConfiguration",
             "changes": ["Interface has been removed"],
             "acceptation": "Interface was incubating"
+        },
+        {
+            "type": "org.gradle.api.artifacts.maven.MavenPom",
+            "member": "Method org.gradle.api.artifacts.maven.MavenPom.project(org.gradle.api.Action)",
+            "changes": ["Method added to interface"],
+            "acceptation": "Action<T> overload for Closure accepting method"
+        },
+        {
+            "type": "org.gradle.api.plugins.MavenPluginConvention",
+            "member": "Method org.gradle.api.plugins.MavenPluginConvention.pom(org.gradle.api.Action)",
+            "acceptation": "Action<T> overload for Closure accepting method"
+        },
+        {
+            "type": "org.gradle.api.plugins.MavenRepositoryHandlerConvention",
+            "member": "Method org.gradle.api.plugins.MavenRepositoryHandlerConvention.mavenDeployer(org.gradle.api.Action)",
+            "changes": ["Method added to interface"],
+            "acceptation": "Action<T> overload for Closure accepting method"
         }
     ]
 }
