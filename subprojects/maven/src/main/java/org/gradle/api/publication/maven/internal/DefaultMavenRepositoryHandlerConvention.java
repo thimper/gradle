@@ -16,6 +16,7 @@
 package org.gradle.api.publication.maven.internal;
 
 import groovy.lang.Closure;
+import org.gradle.api.Action;
 import org.gradle.api.artifacts.maven.GroovyMavenDeployer;
 import org.gradle.api.artifacts.maven.MavenResolver;
 import org.gradle.api.internal.ConfigureByMapAction;
@@ -41,6 +42,11 @@ public class DefaultMavenRepositoryHandlerConvention implements MavenRepositoryH
 
     public GroovyMavenDeployer mavenDeployer(Closure configureClosure) {
         return container.addRepository(createMavenDeployer(), DEFAULT_MAVEN_DEPLOYER_NAME, ConfigureUtil.configureUsing(configureClosure));
+    }
+
+    @Override
+    public GroovyMavenDeployer mavenDeployer(Action<? super GroovyMavenDeployer> configureAction) {
+        return container.addRepository(createMavenDeployer(), DEFAULT_MAVEN_DEPLOYER_NAME, configureAction);
     }
 
     public GroovyMavenDeployer mavenDeployer(Map<String, ?> args) {
