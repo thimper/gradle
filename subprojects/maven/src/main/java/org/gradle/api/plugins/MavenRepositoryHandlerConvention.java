@@ -16,6 +16,7 @@
 package org.gradle.api.plugins;
 
 import groovy.lang.Closure;
+import org.gradle.api.Action;
 import org.gradle.api.artifacts.maven.GroovyMavenDeployer;
 import org.gradle.api.artifacts.maven.MavenResolver;
 
@@ -45,6 +46,16 @@ public interface MavenRepositoryHandlerConvention {
      * @see #mavenDeployer(java.util.Map, groovy.lang.Closure)
      */
     GroovyMavenDeployer mavenDeployer(Closure configureClosure);
+
+    /**
+     * Adds a repository for publishing to a Maven repository. This repository can not be used for resolving dependencies.
+     *
+     * @param configureAction The action to use to configure the repository.
+     * @return The added repository
+     * @see #mavenDeployer()
+     * @since 4.1
+     */
+    GroovyMavenDeployer mavenDeployer(Action<? super GroovyMavenDeployer> configureAction);
 
     /**
      * Adds a repository for publishing to a Maven repository. This repository can not be used for resolving dependencies.
