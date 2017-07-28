@@ -33,6 +33,18 @@
             "member": "Method org.gradle.api.plugins.MavenRepositoryHandlerConvention.mavenDeployer(org.gradle.api.Action)",
             "changes": ["Method added to interface"],
             "acceptation": "Action<T> overload for Closure accepting method"
+        },
+        {
+            "type": "org.gradle.api.artifacts.maven.PomFilterContainer",
+            "member": "Method org.gradle.api.artifacts.maven.PomFilterContainer.pom(java.lang.String,org.gradle.api.Action)",
+            "changes": ["Method added to interface"],
+            "acceptation": "Action<T> overload for Closure accepting method"
+        },
+        {
+            "type": "org.gradle.api.artifacts.maven.PomFilterContainer",
+            "member": "Method org.gradle.api.artifacts.maven.PomFilterContainer.pom(org.gradle.api.Action)",
+            "changes": ["Method added to interface"],
+            "acceptation": "Action<T> overload for Closure accepting method"
         }
     ]
 }
