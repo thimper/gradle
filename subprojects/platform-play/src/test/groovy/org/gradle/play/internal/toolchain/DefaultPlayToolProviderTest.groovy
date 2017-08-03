@@ -54,7 +54,7 @@ class DefaultPlayToolProviderTest extends Specification {
         _ * playPlatform.getPlayVersion() >> playVersion
 
         when:
-        playToolProvider = new DefaultPlayToolProvider(fileResolver, daemonWorkingDir, workerDaemonFactory, workerProcessBuilderFactory, playPlatform, twirlClasspath, routesClasspath, javascriptClasspath)
+        playToolProvider = new DefaultPlayToolProvider(fileResolver, gateToken, daemonWorkingDir, workerDaemonFactory, workerProcessBuilderFactory, playPlatform, twirlClasspath, routesClasspath, javascriptClasspath)
         def runner = playToolProvider.get(PlayApplicationRunner.class)
 
         then:
@@ -73,7 +73,7 @@ class DefaultPlayToolProviderTest extends Specification {
     def "cannot create tool provider for unsupported play versions"() {
         when:
         _ * playPlatform.getPlayVersion() >> playVersion
-        playToolProvider = new DefaultPlayToolProvider(fileResolver, daemonWorkingDir, workerDaemonFactory, workerProcessBuilderFactory, playPlatform, twirlClasspath, routesClasspath, javascriptClasspath)
+        playToolProvider = new DefaultPlayToolProvider(fileResolver, gateToken, daemonWorkingDir, workerDaemonFactory, workerProcessBuilderFactory, playPlatform, twirlClasspath, routesClasspath, javascriptClasspath)
 
         then: "fails with meaningful error message"
         def exception = thrown(InvalidUserDataException)
@@ -90,7 +90,7 @@ class DefaultPlayToolProviderTest extends Specification {
     def "newCompiler provides decent error for unsupported CompileSpec"() {
         setup:
         _ * playPlatform.getPlayVersion() >> DefaultPlayPlatform.DEFAULT_PLAY_VERSION
-        playToolProvider = new DefaultPlayToolProvider(fileResolver, daemonWorkingDir, workerDaemonFactory, workerProcessBuilderFactory, playPlatform, twirlClasspath, routesClasspath, javascriptClasspath)
+        playToolProvider = new DefaultPlayToolProvider(fileResolver, gateToken, daemonWorkingDir, workerDaemonFactory, workerProcessBuilderFactory, playPlatform, twirlClasspath, routesClasspath, javascriptClasspath)
 
         when:
         playToolProvider.newCompiler(UnknownCompileSpec.class)

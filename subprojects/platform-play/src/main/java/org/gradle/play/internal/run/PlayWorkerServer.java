@@ -26,14 +26,19 @@ import org.gradle.process.internal.worker.WorkerProcessContext;
 import java.io.Serializable;
 import java.net.InetSocketAddress;
 import java.net.URLClassLoader;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class PlayWorkerServer implements Action<WorkerProcessContext>, PlayRunWorkerServerProtocol, ReloadListener, Serializable {
 
     private PlayRunSpec runSpec;
     private VersionedPlayRunAdapter runAdapter;
 
-    private volatile CountDownLatch stop;
+    private boolean reloadRequested;
+    private boolean stopRequested;
+    private volatile Lock lock = new ReentrantLock();
+    private volatile Condition messageReady = lock.newCondition();
 
     public PlayWorkerServer(PlayRunSpec runSpec, VersionedPlayRunAdapter runAdapter) {
         this.runSpec = runSpec;
@@ -42,18 +47,24 @@ public class PlayWorkerServer implements Action<WorkerProcessContext>, PlayRunWo
 
     @Override
     public void execute(WorkerProcessContext context) {
-        stop = new CountDownLatch(1);
+        lock.lock();
         final PlayRunWorkerClientProtocol clientProtocol = context.getServerConnection().addOutgoing(PlayRunWorkerClientProtocol.class);
         context.getServerConnection().addIncoming(PlayRunWorkerServerProtocol.class, this);
         context.getServerConnection().connect();
         final PlayAppLifecycleUpdate result = start();
         try {
             clientProtocol.update(result);
-            stop.await();
+            while (!stopRequested) {
+                if (reloadRequested) {
+                    clientProtocol.update(PlayAppLifecycleUpdate.reload());
+                }
+                messageReady.await();
+            }
         } catch (InterruptedException e) {
             throw UncheckedException.throwAsUncheckedException(e);
         } finally {
             clientProtocol.update(PlayAppLifecycleUpdate.stopped());
+            lock.unlock();
         }
     }
 
@@ -86,7 +97,13 @@ public class PlayWorkerServer implements Action<WorkerProcessContext>, PlayRunWo
 
     @Override
     public void stop() {
-        stop.countDown();
+        lock.lock();
+        try {
+            stopRequested = true;
+            messageReady.signalAll();
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
@@ -102,5 +119,12 @@ public class PlayWorkerServer implements Action<WorkerProcessContext>, PlayRunWo
     @Override
     public void reloadRequested() {
         System.out.println("reload requested");
+        lock.lock();
+        try {
+            reloadRequested = true;
+            messageReady.signalAll();
+        } finally {
+            lock.unlock();
+        }
     }
 }

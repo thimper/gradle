@@ -16,6 +16,7 @@
 
 package org.gradle.play.internal.run;
 
+import org.gradle.initialization.BuildGateToken;
 import org.gradle.internal.UncheckedException;
 
 import java.util.concurrent.BlockingQueue;
@@ -23,14 +24,25 @@ import java.util.concurrent.SynchronousQueue;
 
 public class PlayWorkerClient implements PlayRunWorkerClientProtocol {
 
+    private final BuildGateToken gateToken;
     private final BlockingQueue<PlayAppLifecycleUpdate> startEvent = new SynchronousQueue<PlayAppLifecycleUpdate>();
     private final BlockingQueue<PlayAppLifecycleUpdate> stopEvent = new SynchronousQueue<PlayAppLifecycleUpdate>();
+
+    public PlayWorkerClient(BuildGateToken gateToken) {
+        this.gateToken = gateToken;
+        // TODO: Remove
+        System.out.println(gateToken);
+    }
 
     @Override
     public void update(PlayAppLifecycleUpdate update) {
         try {
             if (update.isStopped()) {
                 stopEvent.put(update);
+            } else if (update.isReloadRequest()) {
+                gateToken.release();
+                // TODO: Remove
+                System.out.println(gateToken);
             } else {
                 startEvent.put(update);
             }

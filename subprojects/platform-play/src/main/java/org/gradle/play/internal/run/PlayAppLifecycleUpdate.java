@@ -22,7 +22,9 @@ import java.net.InetSocketAddress;
 public class PlayAppLifecycleUpdate implements Serializable {
     private final InetSocketAddress address;
     private final Exception exception;
+    private final boolean reloadRequest;
 
+    // TODO: Maybe represent these as separate subclasses?
     public static PlayAppLifecycleUpdate stopped() {
         return new PlayAppLifecycleUpdate();
     }
@@ -35,19 +37,32 @@ public class PlayAppLifecycleUpdate implements Serializable {
         return new PlayAppLifecycleUpdate(exception);
     }
 
+    public static PlayAppLifecycleUpdate reload() {
+        return new PlayAppLifecycleUpdate(true);
+    }
+
+    private PlayAppLifecycleUpdate(boolean reloadRequest) {
+        this.address = null;
+        this.exception = null;
+        this.reloadRequest = reloadRequest;
+    }
+
     private PlayAppLifecycleUpdate() {
         this.address = null;
         this.exception = null;
+        this.reloadRequest = false;
     }
 
     private PlayAppLifecycleUpdate(InetSocketAddress address) {
         this.address = address;
         this.exception = null;
+        this.reloadRequest = false;
     }
 
     private PlayAppLifecycleUpdate(Exception exception) {
         this.address = null;
         this.exception = exception;
+        this.reloadRequest = false;
     }
 
     public Exception getException() {
@@ -68,5 +83,9 @@ public class PlayAppLifecycleUpdate implements Serializable {
 
     public boolean isFailed() {
         return exception != null;
+    }
+
+    public boolean isReloadRequest() {
+        return reloadRequest;
     }
 }
