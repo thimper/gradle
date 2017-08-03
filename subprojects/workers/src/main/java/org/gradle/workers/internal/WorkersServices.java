@@ -45,11 +45,6 @@ public class WorkersServices extends AbstractPluginServiceRegistry {
         registration.addProvider(new BuildSessionScopeServices());
     }
 
-    @Override
-    public void registerProjectServices(ServiceRegistration registration) {
-        registration.addProvider(new ProjectScopeServices());
-    }
-
     private static class BuildSessionScopeServices {
 
         WorkerDaemonFactory createWorkerDaemonFactory(WorkerDaemonClientsManager workerDaemonClientsManager, MemoryManager memoryManager, WorkerLeaseRegistry workerLeaseRegistry, BuildOperationExecutor buildOperationExecutor) {
@@ -64,6 +59,12 @@ public class WorkersServices extends AbstractPluginServiceRegistry {
             return new DefaultWorkerDirectoryProvider(gradleUserHomeDirProvider);
         }
 
+        WorkerExecutor createWorkerExecutor(InstantiatorFactory instantiatorFactory, WorkerDaemonFactory daemonWorkerFactory, IsolatedClassloaderWorkerFactory isolatedClassloaderWorkerFactory, FileResolver fileResolver, ExecutorFactory executorFactory, WorkerLeaseRegistry workerLeaseRegistry, BuildOperationExecutor buildOperationExecutor, AsyncWorkTracker asyncWorkTracker, WorkerDirectoryProvider workerDirectoryProvider) {
+            NoIsolationWorkerFactory noIsolationWorkerFactory = new NoIsolationWorkerFactory(workerLeaseRegistry, buildOperationExecutor, asyncWorkTracker, instantiatorFactory);
+            DefaultWorkerExecutor workerExecutor = instantiatorFactory.decorate().newInstance(DefaultWorkerExecutor.class, daemonWorkerFactory, isolatedClassloaderWorkerFactory, noIsolationWorkerFactory, fileResolver, executorFactory, workerLeaseRegistry, buildOperationExecutor, asyncWorkTracker, workerDirectoryProvider);
+            noIsolationWorkerFactory.setWorkerExecutor(workerExecutor);
+            return workerExecutor;
+        }
     }
 
     private static class GradleUserHomeServices {
@@ -71,16 +72,6 @@ public class WorkersServices extends AbstractPluginServiceRegistry {
                                                                     LoggingManagerInternal loggingManager,
                                                                     ListenerManager listenerManager) {
             return new WorkerDaemonClientsManager(new WorkerDaemonStarter(workerFactory, loggingManager), listenerManager, loggingManager);
-        }
-    }
-
-    private static class ProjectScopeServices {
-
-        WorkerExecutor createWorkerExecutor(InstantiatorFactory instantiatorFactory, WorkerDaemonFactory daemonWorkerFactory, IsolatedClassloaderWorkerFactory isolatedClassloaderWorkerFactory, FileResolver fileResolver, ExecutorFactory executorFactory, WorkerLeaseRegistry workerLeaseRegistry, BuildOperationExecutor buildOperationExecutor, AsyncWorkTracker asyncWorkTracker, WorkerDirectoryProvider workerDirectoryProvider) {
-            NoIsolationWorkerFactory noIsolationWorkerFactory = new NoIsolationWorkerFactory(workerLeaseRegistry, buildOperationExecutor, asyncWorkTracker, instantiatorFactory);
-            DefaultWorkerExecutor workerExecutor = instantiatorFactory.decorate().newInstance(DefaultWorkerExecutor.class, daemonWorkerFactory, isolatedClassloaderWorkerFactory, noIsolationWorkerFactory, fileResolver, executorFactory, workerLeaseRegistry, buildOperationExecutor, asyncWorkTracker, workerDirectoryProvider);
-            noIsolationWorkerFactory.setWorkerExecutor(workerExecutor);
-            return workerExecutor;
         }
     }
 }
