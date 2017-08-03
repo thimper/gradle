@@ -44,7 +44,7 @@ public class PlayApplicationRunner {
         process.getConnection().addIncoming(PlayRunWorkerClientProtocol.class, clientCallBack);
         PlayRunWorkerServerProtocol workerServer = process.getConnection().addOutgoing(PlayRunWorkerServerProtocol.class);
         process.getConnection().connect();
-        PlayAppLifecycleUpdate result = clientCallBack.waitForRunning();
+        PlayAppStart result = clientCallBack.waitForRunning();
         if (result.isRunning()) {
             return new PlayApplicationRunnerToken(workerServer, clientCallBack, process, result.getAddress());
         } else {

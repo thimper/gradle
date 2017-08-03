@@ -19,73 +19,24 @@ package org.gradle.play.internal.run;
 import java.io.Serializable;
 import java.net.InetSocketAddress;
 
-public class PlayAppLifecycleUpdate implements Serializable {
-    private final InetSocketAddress address;
-    private final Exception exception;
-    private final boolean reloadRequest;
-
-    // TODO: Maybe represent these as separate subclasses?
-    public static PlayAppLifecycleUpdate stopped() {
-        return new PlayAppLifecycleUpdate();
+abstract class PlayAppLifecycleUpdate implements Serializable {
+    static PlayAppLifecycleUpdate stopped() {
+        return new PlayAppStop();
     }
 
-    public static PlayAppLifecycleUpdate running(InetSocketAddress address) {
-        return new PlayAppLifecycleUpdate(address);
+    static PlayAppLifecycleUpdate running(InetSocketAddress address) {
+        return new PlayAppStart(address);
     }
 
-    public static PlayAppLifecycleUpdate failed(Exception exception) {
-        return new PlayAppLifecycleUpdate(exception);
+    static PlayAppLifecycleUpdate failed(Exception exception) {
+        return new PlayAppStart(exception);
     }
 
-    public static PlayAppLifecycleUpdate reload() {
-        return new PlayAppLifecycleUpdate(true);
+    static PlayAppLifecycleUpdate reloadRequested() {
+        return new PlayAppReload(true);
     }
 
-    private PlayAppLifecycleUpdate(boolean reloadRequest) {
-        this.address = null;
-        this.exception = null;
-        this.reloadRequest = reloadRequest;
-    }
-
-    private PlayAppLifecycleUpdate() {
-        this.address = null;
-        this.exception = null;
-        this.reloadRequest = false;
-    }
-
-    private PlayAppLifecycleUpdate(InetSocketAddress address) {
-        this.address = address;
-        this.exception = null;
-        this.reloadRequest = false;
-    }
-
-    private PlayAppLifecycleUpdate(Exception exception) {
-        this.address = null;
-        this.exception = exception;
-        this.reloadRequest = false;
-    }
-
-    public Exception getException() {
-        return exception;
-    }
-
-    public InetSocketAddress getAddress() {
-        return address;
-    }
-
-    public boolean isRunning() {
-        return address!=null && exception == null;
-    }
-
-    public boolean isStopped() {
-        return address==null && exception == null;
-    }
-
-    public boolean isFailed() {
-        return exception != null;
-    }
-
-    public boolean isReloadRequest() {
-        return reloadRequest;
+    static PlayAppLifecycleUpdate reloadCompleted() {
+        return new PlayAppReload(false);
     }
 }
