@@ -63,7 +63,7 @@ public class DefaultTaskOutputFilesRepository implements TaskOutputFilesReposito
         for (String outputFilePath : taskExecution.getDeclaredOutputFilePaths()) {
             FileSnapshot fileSnapshot = fileSystemMirror.getFile(outputFilePath);
             File outputFile = new File(outputFilePath);
-            boolean exists = fileSnapshot == null ? outputFile.exists() : fileSnapshot.getType() != FileType.Missing;
+            boolean exists = fileSnapshot.getType() != FileType.Missing;
             if (exists) {
                 outputFiles.put(outputFilePath, Boolean.TRUE);
                 File outputFileParent = outputFile.getParentFile();
