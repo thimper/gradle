@@ -16,6 +16,7 @@
 
 package org.gradle.api.tasks.compile
 
+import groovy.transform.NotYetImplemented
 import org.gradle.integtests.fixtures.AbstractIntegrationSpec
 import org.gradle.integtests.fixtures.executer.GradleContextualExecuter
 import org.gradle.integtests.fixtures.jvm.TestJvmComponent
@@ -88,6 +89,7 @@ abstract class AbstractCompilerDaemonReuseIntegrationTest extends AbstractIntegr
         assertOneCompilerDaemonIsCreated()
     }
 
+    @NotYetImplemented
     @IgnoreIf({GradleContextualExecuter.parallel})
     def "reuses compiler daemons within a composite build"() {
         Assume.assumeTrue(supportsCompositeBuilds())

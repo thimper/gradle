@@ -32,7 +32,6 @@ import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.language.scala.tasks.AbstractScalaCompile;
-import org.gradle.process.internal.worker.child.WorkerDirectoryProvider;
 import org.gradle.workers.internal.WorkerDaemonFactory;
 
 import javax.inject.Inject;
@@ -119,7 +118,7 @@ public class ScalaCompile extends AbstractScalaCompile {
             WorkerDaemonFactory workerDaemonFactory = getServices().get(WorkerDaemonFactory.class);
             FileResolver fileResolver = getServices().get(FileResolver.class);
             ScalaCompilerFactory scalaCompilerFactory = new ScalaCompilerFactory(
-                getServices().get(WorkerDirectoryProvider.class).getIdleWorkingDirectory(), workerDaemonFactory, getScalaClasspath(),
+                projectInternal.getRootProject().getProjectDir(), workerDaemonFactory, getScalaClasspath(),
                 getZincClasspath(), getProject().getGradle().getGradleUserHomeDir(), fileResolver);
             compiler = scalaCompilerFactory.newCompiler(spec);
         }
