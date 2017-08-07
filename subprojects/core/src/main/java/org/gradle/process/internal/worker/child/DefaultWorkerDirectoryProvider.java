@@ -23,17 +23,19 @@ import java.io.File;
 
 public class DefaultWorkerDirectoryProvider implements WorkerDirectoryProvider {
     private final File defaultWorkerDirectory;
+    private boolean didMkdirs;
 
     public DefaultWorkerDirectoryProvider(GradleUserHomeDirProvider gradleUserHomeDirProvider) {
         File gradleUserHomeDir = gradleUserHomeDirProvider.getGradleUserHomeDirectory();
         defaultWorkerDirectory = new File(gradleUserHomeDir, "workers");
-        if (!defaultWorkerDirectory.exists()) {
-            GFileUtils.mkdirs(defaultWorkerDirectory);
-        }
     }
 
     @Override
     public File getIdleWorkingDirectory() {
+        if (!didMkdirs) {
+            GFileUtils.mkdirs(defaultWorkerDirectory);
+            didMkdirs = true;
+        }
         return defaultWorkerDirectory;
     }
 }
