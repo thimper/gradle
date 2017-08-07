@@ -69,6 +69,10 @@ Script plugins are applied to Gradle settings or projects via the `apply from: '
 - HTTP script plugins are cached for [`--offline`](userguide/dependency_management.html#sub:cache_offline) use.
 - Download of HTTP script plugins honours [proxy authentication settings](userguide/build_environment.html#sec:accessing_the_web_via_a_proxy).
 
+### Naming task actions defined with doFirst {} and doLast {}
+
+Task actions that are defined in build scripts can now be named using `doFirst("First things first") {}` or `doLast("One last thing") {}`. Gradle uses the names for logging, which allows the user, for example, to see the order in which actions are executed in the task execution views of IDEs. The action names will also be utilised in build scans in the future. This feature is supported in both Kotlin and Groovy build scripts.
+
 ## Promoted features
 
 Promoted features are features that were incubating in previous versions of Gradle but are now supported and subject to backwards compatibility.
