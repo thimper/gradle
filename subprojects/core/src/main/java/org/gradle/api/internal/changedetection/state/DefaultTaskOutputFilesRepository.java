@@ -43,7 +43,7 @@ public class DefaultTaskOutputFilesRepository implements TaskOutputFilesReposito
         return containsFilesGeneratedByGradle(absoluteFile) || isContainedInAnOutput(absoluteFile);
     }
 
-    private Boolean isContainedInAnOutput(File file) {
+    private boolean isContainedInAnOutput(File file) {
         File currentFile = file;
         while (currentFile != null) {
             if (outputFiles.get(currentFile.getPath()) == Boolean.TRUE) {
