@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package org.gradle.api.internal.changedetection.state;
+package org.gradle.internal.cleanup;
 
-import java.io.File;
-
-public interface TaskOutputFilesRepository {
-    boolean isGeneratedByGradle(File file);
-
-    void recordOutputs(TaskExecution taskExecution);
+public interface BuildOutputCleanupCache {
+    /**
+     * Cleans stale output files from previous builds.
+     * <p>
+     * Stale files are left behind under the following conditions:
+     * <p>
+     * - The task history is deleted and one or more input files are removed.
+     * - The build upgrades or downgrades to a different Gradle version, wasn't executed with that version before and one or more input files are removed.
+     */
+    void cleanIfStale();
 }

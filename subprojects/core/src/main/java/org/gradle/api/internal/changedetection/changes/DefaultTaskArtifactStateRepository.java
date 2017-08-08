@@ -30,7 +30,6 @@ import org.gradle.api.internal.changedetection.state.FileCollectionSnapshot;
 import org.gradle.api.internal.changedetection.state.FileCollectionSnapshotterRegistry;
 import org.gradle.api.internal.changedetection.state.TaskExecution;
 import org.gradle.api.internal.changedetection.state.TaskHistoryRepository;
-import org.gradle.api.internal.changedetection.state.TaskOutputFilesRepository;
 import org.gradle.api.internal.changedetection.state.ValueSnapshotter;
 import org.gradle.api.internal.file.FileCollectionFactory;
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs;
@@ -52,12 +51,11 @@ public class DefaultTaskArtifactStateRepository implements TaskArtifactStateRepo
     private final ClassLoaderHierarchyHasher classLoaderHierarchyHasher;
     private final TaskCacheKeyCalculator cacheKeyCalculator;
     private final ValueSnapshotter valueSnapshotter;
-    private final TaskOutputFilesRepository taskOutputFilesRepository;
 
     public DefaultTaskArtifactStateRepository(TaskHistoryRepository taskHistoryRepository, Instantiator instantiator,
                                               FileCollectionSnapshotterRegistry fileCollectionSnapshotterRegistry,
                                               FileCollectionFactory fileCollectionFactory, ClassLoaderHierarchyHasher classLoaderHierarchyHasher,
-                                              TaskCacheKeyCalculator cacheKeyCalculator, ValueSnapshotter valueSnapshotter, TaskOutputFilesRepository taskOutputFilesRepository) {
+                                              TaskCacheKeyCalculator cacheKeyCalculator, ValueSnapshotter valueSnapshotter) {
         this.taskHistoryRepository = taskHistoryRepository;
         this.instantiator = instantiator;
         this.fileCollectionSnapshotterRegistry = fileCollectionSnapshotterRegistry;
@@ -65,7 +63,6 @@ public class DefaultTaskArtifactStateRepository implements TaskArtifactStateRepo
         this.classLoaderHierarchyHasher = classLoaderHierarchyHasher;
         this.cacheKeyCalculator = cacheKeyCalculator;
         this.valueSnapshotter = valueSnapshotter;
-        this.taskOutputFilesRepository = taskOutputFilesRepository;
     }
 
     public TaskArtifactState getStateFor(final TaskInternal task) {
@@ -186,7 +183,6 @@ public class DefaultTaskArtifactStateRepository implements TaskArtifactStateRepo
             // Only store new taskState if there was no failure, or some output files have been changed
             if (failure == null || taskState.hasAnyOutputFileChanges()) {
                 history.update();
-                taskOutputFilesRepository.recordOutputs(history.getCurrentExecution());
             }
         }
 

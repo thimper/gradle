@@ -16,17 +16,9 @@
 
 package org.gradle.internal.cleanup;
 
-import org.gradle.api.file.FileCollection;
+import java.io.File;
 
-public interface BuildOutputCleanupRegistry {
+public interface BuildOutputDeleter {
 
-    /**
-     * Registers outputs to be cleaned up as {@link org.gradle.api.Project#files(Object...)}.
-     */
-    void registerOutputs(Object files);
-
-    /**
-     * Returns all registered outputs.
-     */
-    FileCollection getOutputs();
+    void delete(Iterable<File> outputs);
 }

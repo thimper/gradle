@@ -16,17 +16,13 @@
 
 package org.gradle.internal.cleanup;
 
-import org.gradle.api.file.FileCollection;
+import org.gradle.api.internal.GradleInternal;
+import org.gradle.initialization.ModelConfigurationListener;
 
-public interface BuildOutputCleanupRegistry {
-
-    /**
-     * Registers outputs to be cleaned up as {@link org.gradle.api.Project#files(Object...)}.
-     */
-    void registerOutputs(Object files);
-
-    /**
-     * Returns all registered outputs.
-     */
-    FileCollection getOutputs();
+public class BuildOutputCleanupListener implements ModelConfigurationListener {
+    @Override
+    public void onConfigure(GradleInternal model) {
+        final BuildOutputCleanupCache cache = model.getServices().get(BuildOutputCleanupCache.class);
+        cache.cleanIfStale();
+    }
 }
