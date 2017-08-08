@@ -260,7 +260,8 @@ public class Test extends ConventionTask implements JavaForkOptions, PatternFilt
         this.testReporter = testReporter;
     }
 
-    void setTestExecuter(TestExecuter testExecuter) {
+    // TODO - don't set this public
+    public void setTestExecuter(TestExecuter testExecuter) {
         this.testExecuter = testExecuter;
     }
 

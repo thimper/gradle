@@ -61,8 +61,12 @@ public class CompositeTaskOutputPropertySpec extends AbstractTaskOutputPropertyS
                             throw new IllegalArgumentException(String.format("Mapped output property '%s' has null key", getPropertyName()));
                         }
                         String id = key.toString();
-                        File file = resolver.resolve(entry.getValue());
-                        return new CacheableTaskOutputCompositeFilePropertyElementSpec(CompositeTaskOutputPropertySpec.this, "." + id, file);
+                        try {
+                            File file = resolver.resolve(entry.getValue());
+                            return new CacheableTaskOutputCompositeFilePropertyElementSpec(CompositeTaskOutputPropertySpec.this, "." + id, file);
+                        } catch (RuntimeException ex) {
+                            throw new IllegalArgumentException(String.format("Mapped output property '%s', wasn't process propertly", getPropertyName()), ex);
+                        }
                     }
                     return endOfData();
                 }
