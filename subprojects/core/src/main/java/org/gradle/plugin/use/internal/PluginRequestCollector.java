@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.gradle.util.CollectionUtils.collect;
+import static org.gradle.util.CollectionUtils.filter;
+import static org.gradle.util.CollectionUtils.groupBy;
 
 /**
  * The real delegate of the plugins {} block.
@@ -108,8 +110,10 @@ public class PluginRequestCollector {
             }
         });
 
+        // TODO:rbo Dedupe the deduplicating code
+
         // Check for duplicate scripts
-        Map<String, Collection<PluginRequestInternal>> groupedByScript = CollectionUtils.groupBy(CollectionUtils.filter(pluginRequests, new Spec<PluginRequestInternal>() {
+        Map<String, Collection<PluginRequestInternal>> groupedByScript = groupBy(filter(pluginRequests, new Spec<PluginRequestInternal>() {
             @Override
             public boolean isSatisfiedBy(PluginRequestInternal pluginRequest) {
                 return pluginRequest.getScript() != null;
@@ -132,7 +136,7 @@ public class PluginRequestCollector {
         }
 
         // Check for duplicate IDs
-        Map<PluginId, Collection<PluginRequestInternal>> groupedById = CollectionUtils.groupBy(CollectionUtils.filter(pluginRequests, new Spec<PluginRequestInternal>() {
+        Map<PluginId, Collection<PluginRequestInternal>> groupedById = groupBy(filter(pluginRequests, new Spec<PluginRequestInternal>() {
             @Override
             public boolean isSatisfiedBy(PluginRequestInternal pluginRequest) {
                 return pluginRequest.getId() != null;

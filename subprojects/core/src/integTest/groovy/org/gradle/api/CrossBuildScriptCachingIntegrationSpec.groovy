@@ -634,7 +634,6 @@ task fastTask { }
 
         then:
         String hash = uniqueRemapped('main')
-        // TODO:pm find out why this change is necessary!
         getCompileClasspath(hash, 'dsl').length == 1
     }
 
