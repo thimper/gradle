@@ -311,7 +311,7 @@ class ScriptPluginUseIntegrationTest extends AbstractIntegrationSpec {
         operations.hasOperation("Apply plugin script 'gradle/hello.gradle' to root project 'root'")
     }
 
-    def "reasonable error message when requested script plugin file does not exists"() {
+    def "reasonable error message when requested script plugin file does not exist"() {
 
         given:
         buildFile << """
@@ -331,16 +331,16 @@ class ScriptPluginUseIntegrationTest extends AbstractIntegrationSpec {
         !operations.hasOperation("Apply plugin script 'gradle/other.gradle' to root project 'root'")
     }
 
-    def "reasonable error message when requested script plugin remote URL does not exists"() {
+    def "reasonable error message when requested script plugin remote URL does not exist"() {
 
         given:
-        server.expectGetMissing("/do-not-exists.gradle")
+        server.expectGetMissing("/do-not-exist.gradle")
         server.start()
 
         and:
         buildFile << """
             plugins {
-                script "http://localhost:${server.port}/do-not-exists.gradle"
+                script "http://localhost:${server.port}/do-not-exist.gradle"
             }
         """.stripIndent()
 
@@ -349,10 +349,10 @@ class ScriptPluginUseIntegrationTest extends AbstractIntegrationSpec {
 
         then:
         failureCauseContains("Could not read")
-        failureCauseContains("'http://localhost:${server.port}/do-not-exists.gradle' as it does not exist.")
+        failureCauseContains("'http://localhost:${server.port}/do-not-exist.gradle' as it does not exist.")
 
         and:
-        !operations.hasOperation("Apply plugin script 'http://localhost:${server.port}/do-not-exists.gradle' to root project 'root'")
+        !operations.hasOperation("Apply plugin script 'http://localhost:${server.port}/do-not-exist.gradle' to root project 'root'")
     }
 
 
