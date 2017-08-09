@@ -169,10 +169,6 @@ class ScriptPluginUseIntegrationTest extends AbstractIntegrationSpec {
 
         """.stripIndent()
 
-        and:
-        buildFile << """
-        """.stripIndent()
-
         when:
         succeeds "help"
 
