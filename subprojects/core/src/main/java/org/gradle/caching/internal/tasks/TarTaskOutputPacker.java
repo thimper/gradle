@@ -19,7 +19,6 @@ package org.gradle.caching.internal.tasks;
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import com.google.common.io.Files;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.CloseShieldInputStream;
@@ -46,6 +45,8 @@ import org.gradle.internal.nativeplatform.filesystem.FileSystem;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -69,6 +70,13 @@ public class TarTaskOutputPacker implements TaskOutputPacker {
     private static final long NANOS_PER_SECOND = TimeUnit.SECONDS.toNanos(1);
     @SuppressWarnings("OctalInteger")
     private static final int FILE_PERMISSION_MASK = 0777;
+    private static final int BUFFER_SIZE = 64 * 1024;
+    private static final ThreadLocal<byte[]> COPY_BUFFERS = new ThreadLocal<byte[]>() {
+        @Override
+        protected byte[] initialValue() {
+            return new byte[BUFFER_SIZE];
+        }
+    };
 
     private final DefaultDirectoryWalkerFactory directoryWalkerFactory;
     private final FileSystem fileSystem;
@@ -198,7 +206,12 @@ public class TarTaskOutputPacker implements TaskOutputPacker {
 
     private void storeFileEntry(File file, String path, long lastModified, long size, int mode, TarOutputStream outputStream) throws IOException {
         createTarEntry(path, lastModified, size, UnixStat.FILE_FLAG | mode, outputStream);
-        Files.copy(file, outputStream);
+        InputStream inputStream = new FileInputStream(file);
+        try {
+            IOUtils.copyLarge(inputStream, outputStream, COPY_BUFFERS.get());
+        } finally {
+            IOUtils.closeQuietly(inputStream);
+        }
         outputStream.closeEntry();
     }
 
@@ -302,7 +315,12 @@ public class TarTaskOutputPacker implements TaskOutputPacker {
         if (isDirEntry) {
             FileUtils.forceMkdir(outputFile);
         } else {
-            Files.asByteSink(outputFile).writeFrom(input);
+            OutputStream output = new FileOutputStream(outputFile);
+            try {
+                IOUtils.copyLarge(input, output, COPY_BUFFERS.get());
+            } finally {
+                IOUtils.closeQuietly(output);
+            }
         }
 
         fileSystem.chmod(outputFile, entry.getMode() & FILE_PERMISSION_MASK);
