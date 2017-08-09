@@ -15,6 +15,7 @@
  */
 package org.gradle.plugin.use.resolve.service
 
+import org.gradle.api.internal.plugins.ApplyPluginBuildOperationType
 import org.gradle.integtests.fixtures.AbstractIntegrationSpec
 import org.gradle.integtests.fixtures.BuildOperationsFixture
 import org.gradle.test.fixtures.server.http.HttpServer
@@ -209,7 +210,7 @@ class ScriptPluginUseIntegrationTest extends AbstractIntegrationSpec {
             """.stripIndent().trim()
 
         and:
-        operations.hasOperation("Apply plugin script 'gradle/hello.gradle' to root project 'root'")
+        operations.all(ApplyPluginBuildOperationType) { it.displayName.contains("hello.gradle") }.size() == 1
     }
 
     def "same script plugin requested from different URLs gets applied once"() {
