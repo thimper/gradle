@@ -22,16 +22,18 @@ class RepoScriptBlockUtil {
     }
 
     static String jcenterRepository() {
-        """repositories {
-               ${jcenterRepositoryDefinition()}
-           }
+        """
+            repositories {
+                ${jcenterRepositoryDefinition()}
+            }
         """
     }
 
     static String mavenCentralRepository() {
-        """repositories {
-               ${mavenCentralRepositoryDefinition()}
-           }
+        """
+            repositories {
+                ${mavenCentralRepositoryDefinition()}
+            }
         """
     }
 
@@ -39,11 +41,11 @@ class RepoScriptBlockUtil {
         mavenRepositoryDefinition('org.gradle.integtest.mirrors.jcenter', 'jcenter-remote', 'jcenter()')
     }
 
-    static mavenCentralRepositoryDefinition() {
+    static String mavenCentralRepositoryDefinition() {
         mavenRepositoryDefinition('org.gradle.integtest.mirrors.mavencentral', 'repo1-remote', 'mavenCentral()')
     }
 
-    static typesafeMavenRepositoryDefinition() {
+    static String typesafeMavenRepositoryDefinition() {
         String defaultRepo = '''
            maven {
                name "typesafe-maven-release"
@@ -52,25 +54,26 @@ class RepoScriptBlockUtil {
         mavenRepositoryDefinition('org.gradle.integtest.mirrors.typesafemaven', 'typesafe-maven-release-remote', defaultRepo)
     }
 
-    static typesafeIvyRepositoryDefinition() {
+    static String typesafeIvyRepositoryDefinition() {
         String repoUrl = System.getProperty('org.gradle.integtest.mirrors.typesafeivy')
         repoUrl = repoUrl ?: "https://repo.typesafe.com/typesafe/ivy-releases"
         """
             ivy {
                 name "typesafe-ivy-release"
-                url ${repoUrl}
+                url '${repoUrl}'
                 layout "ivy"
             }
         """
     }
 
-    private static mavenRepositoryDefinition(String repoUrlProperty, String repoName, String defaultRepo) {
+    private static String mavenRepositoryDefinition(String repoUrlProperty, String repoName, String defaultRepo) {
         String repoUrl = System.getProperty(repoUrlProperty)
         if (repoUrl) {
-            """maven {
-                   name '${repoName}'
-                   url '${repoUrl}'
-               }
+            """
+                maven {
+                    name '${repoName}'
+                    url '${repoUrl}'
+                }
             """
         } else {
             defaultRepo
