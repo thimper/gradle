@@ -40,7 +40,7 @@ abstract class AbstractComponentReportIntegrationTest extends AbstractIntegratio
     }
 
     String expected(String normalised) {
-        String raw = """:components
+        String raw = """Task :components
 
 ------------------------------------------------------------
 Root project
