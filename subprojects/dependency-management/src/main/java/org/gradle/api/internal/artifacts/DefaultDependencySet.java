@@ -58,7 +58,7 @@ public class DefaultDependencySet extends DelegatingDomainObjectSet<Dependency> 
     @Override
     public boolean add(final Dependency o) {
         if (o instanceof AbstractModuleDependency) {
-            ((AbstractModuleDependency) o).addMutationValidator(mutationValidator);
+            //((AbstractModuleDependency) o).addMutationValidator(mutationValidator);
         }
         return super.add(o);
     }
