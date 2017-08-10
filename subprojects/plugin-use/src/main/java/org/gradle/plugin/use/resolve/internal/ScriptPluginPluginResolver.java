@@ -46,7 +46,7 @@ public class ScriptPluginPluginResolver implements PluginResolver {
     private final ScriptPluginLoaderClassLoader pluginsLoader;
 
     public ScriptPluginPluginResolver(TextResourceLoader textResourceLoader, ClassLoaderScope targetScope) {
-        pluginsLoader = new ScriptPluginLoaderClassLoader(textResourceLoader);
+        pluginsLoader = new ScriptPluginLoaderClassLoader(textResourceLoader, targetScope.getExportClassLoader());
         targetScope.createChild("script-plugins-loaders").export(pluginsLoader);
     }
 
@@ -115,7 +115,7 @@ public class ScriptPluginPluginResolver implements PluginResolver {
 
         @Override
         public String getDisplayName() {
-            return pluginRequest.getDisplayName();
+            return "script plugin '" + pluginRequest.getRelativeScriptUri() + "'";
         }
 
         @Nullable
@@ -165,8 +165,8 @@ public class ScriptPluginPluginResolver implements PluginResolver {
 
         private final TextResourceLoader textResourceLoader;
 
-        private ScriptPluginLoaderClassLoader(TextResourceLoader textResourceLoader) {
-            super(new URL[0]);
+        private ScriptPluginLoaderClassLoader(TextResourceLoader textResourceLoader, ClassLoader parentLoader) {
+            super(new URL[0], parentLoader);
             this.textResourceLoader = textResourceLoader;
         }
 

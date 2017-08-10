@@ -16,13 +16,14 @@
 package org.gradle.plugin.use.resolve.internal;
 
 import org.gradle.api.artifacts.ModuleVersionSelector;
-import org.gradle.plugin.management.internal.DefaultPluginRequest;
 import org.gradle.plugin.management.internal.PluginRequestInternal;
 import org.gradle.plugin.use.PluginId;
 
 import javax.annotation.Nullable;
 import java.io.File;
 import java.net.URI;
+
+import static org.gradle.plugin.management.internal.DefaultPluginRequest.*;
 
 public class ContextAwarePluginRequest implements PluginRequestInternal {
 
@@ -34,12 +35,16 @@ public class ContextAwarePluginRequest implements PluginRequestInternal {
         this.context = context;
     }
 
+    @Nullable
     public URI getScriptUri() {
-        String scriptUri = getScript();
-        if (scriptUri == null) {
+        if (isScriptRequest()) {
             return null;
         }
-        return getRequestingScriptUri().resolve(scriptUri);
+        return getRequestingScriptUri().resolve(getScript());
+    }
+
+    private boolean isScriptRequest() {
+        return getScript() == null;
     }
 
     private URI getRequestingScriptUri() {
@@ -57,12 +62,23 @@ public class ContextAwarePluginRequest implements PluginRequestInternal {
 
     @Override
     public String getDisplayName() {
+        if (isScriptRequest()) {
+            return scriptRequestDisplayName();
+        }
+        return delegate.getDisplayName();
+    }
+
+    private String scriptRequestDisplayName() {
+        return buildDisplayName(getId(), getRelativeScriptUri().toString(), getVersion(), getModule(), isApply());
+    }
+
+    @Nullable
+    URI getRelativeScriptUri() {
         URI scriptUri = getScriptUri();
         if (scriptUri == null) {
-            return delegate.getDisplayName();
+            return null;
         }
-        URI scriptUriRelativeToRootDir = context.getBuildRootDir().toURI().relativize(scriptUri);
-        return DefaultPluginRequest.buildDisplayName(getId(), scriptUriRelativeToRootDir.toString(), getVersion(), getModule(), isApply());
+        return context.getBuildRootDir().toURI().relativize(scriptUri);
     }
 
     @Nullable

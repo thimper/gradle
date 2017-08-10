@@ -55,7 +55,7 @@ class ScriptPluginUseIntegrationTest extends AbstractIntegrationSpec {
         output.contains("Hello from the other side")
 
         and:
-        operations.hasOperation("Apply plugin script 'gradle/other.gradle' to root project 'root'")
+        operations.hasOperation("Apply script plugin 'gradle/other.gradle' to root project 'root'")
     }
 
     def "project script can request script plugin from a remote URL, is cached and work with --offline"() {
@@ -87,7 +87,7 @@ class ScriptPluginUseIntegrationTest extends AbstractIntegrationSpec {
         output.contains("Hello from the other side")
 
         and:
-        operations.hasOperation("Apply plugin script '$scriptUrl' to root project 'root'")
+        operations.hasOperation("Apply script plugin '$scriptUrl' to root project 'root'")
 
         then:
         server.stop()
@@ -99,7 +99,7 @@ class ScriptPluginUseIntegrationTest extends AbstractIntegrationSpec {
         output.contains("Hello from the other side")
 
         and:
-        operations.hasOperation("Apply plugin script '$scriptUrl' to root project 'root'")
+        operations.hasOperation("Apply script plugin '$scriptUrl' to root project 'root'")
     }
 
     def "project script can request multiple script plugins"() {
@@ -130,8 +130,8 @@ class ScriptPluginUseIntegrationTest extends AbstractIntegrationSpec {
         output.contains("Bye from the other side")
 
         and:
-        operations.hasOperation("Apply plugin script 'gradle/hello.gradle' to root project 'root'")
-        operations.hasOperation("Apply plugin script 'http://localhost:${server.port}/bye.gradle' to root project 'root'")
+        operations.hasOperation("Apply script plugin 'gradle/hello.gradle' to root project 'root'")
+        operations.hasOperation("Apply script plugin 'http://localhost:${server.port}/bye.gradle' to root project 'root'")
     }
 
     def "project scripts in a multi-projects build can request script plugins"() {
@@ -179,9 +179,9 @@ class ScriptPluginUseIntegrationTest extends AbstractIntegrationSpec {
         output.contains("Hello from the other side of b")
 
         and:
-        operations.hasOperation("Apply plugin script 'gradle/hello.gradle' to root project 'root'")
-        operations.hasOperation("Apply plugin script 'gradle/hello.gradle' to project ':a'")
-        operations.hasOperation("Apply plugin script 'gradle/hello.gradle' to project ':b'")
+        operations.hasOperation("Apply script plugin 'gradle/hello.gradle' to root project 'root'")
+        operations.hasOperation("Apply script plugin 'gradle/hello.gradle' to project ':a'")
+        operations.hasOperation("Apply script plugin 'gradle/hello.gradle' to project ':b'")
     }
 
     def "same script plugin requested from different paths gets applied only once"() {
@@ -247,9 +247,9 @@ class ScriptPluginUseIntegrationTest extends AbstractIntegrationSpec {
             """.stripIndent().trim()
 
         and:
-        operations.hasOperation("Apply plugin script 'http://localhost:${server.port}/hello.gradle' to root project 'root'")
-        !operations.hasOperation("Apply plugin script 'gradle/hello.gradle' to root project 'root'")
-        !operations.hasOperation("Apply plugin script 'http://localhost:${server.port}/greetings.gradle' to root project 'root'")
+        operations.hasOperation("Apply script plugin 'http://localhost:${server.port}/hello.gradle' to root project 'root'")
+        !operations.hasOperation("Apply script plugin 'gradle/hello.gradle' to root project 'root'")
+        !operations.hasOperation("Apply script plugin 'http://localhost:${server.port}/greetings.gradle' to root project 'root'")
     }
 
     def "requested script plugin can use classpath dependencies via the buildscript block"() {
@@ -284,7 +284,7 @@ class ScriptPluginUseIntegrationTest extends AbstractIntegrationSpec {
         output.contains("eldarG")
 
         and:
-        operations.hasOperation("Apply plugin script 'gradle/other.gradle' to root project 'root'")
+        operations.hasOperation("Apply script plugin 'gradle/other.gradle' to root project 'root'")
     }
 
     def "build operations for the application of script plugins requested from files display canonicalized paths relative to build root dir"() {
@@ -305,7 +305,7 @@ class ScriptPluginUseIntegrationTest extends AbstractIntegrationSpec {
         succeeds "help"
 
         then:
-        operations.hasOperation("Apply plugin script 'gradle/hello.gradle' to root project 'root'")
+        operations.hasOperation("Apply script plugin 'gradle/hello.gradle' to root project 'root'")
     }
 
     def "reasonable error message when requested script plugin file does not exist"() {
@@ -325,7 +325,7 @@ class ScriptPluginUseIntegrationTest extends AbstractIntegrationSpec {
         failureCauseContains("gradle/other.gradle' as it does not exist.")
 
         and:
-        !operations.hasOperation("Apply plugin script 'gradle/other.gradle' to root project 'root'")
+        !operations.hasOperation("Apply script plugin 'gradle/other.gradle' to root project 'root'")
     }
 
     def "reasonable error message when requested script plugin remote URL does not exist"() {
@@ -349,7 +349,7 @@ class ScriptPluginUseIntegrationTest extends AbstractIntegrationSpec {
         failureCauseContains("'http://localhost:${server.port}/do-not-exist.gradle' as it does not exist.")
 
         and:
-        !operations.hasOperation("Apply plugin script 'http://localhost:${server.port}/do-not-exist.gradle' to root project 'root'")
+        !operations.hasOperation("Apply script plugin 'http://localhost:${server.port}/do-not-exist.gradle' to root project 'root'")
     }
 
 
@@ -375,7 +375,7 @@ class ScriptPluginUseIntegrationTest extends AbstractIntegrationSpec {
         failure.assertHasDescription("Script Plugin 'gradle/hello.gradle' was already requested at line 4")
 
         and:
-        !operations.hasOperation("Apply plugin script 'gradle/hello.gradle' to root project 'root'")
+        !operations.hasOperation("Apply script plugin 'gradle/hello.gradle' to root project 'root'")
     }
 
     def "cannot set version on script plugin requests"() {
