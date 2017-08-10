@@ -1,4 +1,4 @@
-:hello
+Task :hello
 [ant:echo] Hello, from Ant
 Hello, from Gradle
 

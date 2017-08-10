@@ -1,4 +1,4 @@
-:hello
+Task :hello
 [ant:echo] hello from Ant
 
 BUILD SUCCESSFUL in 0s
