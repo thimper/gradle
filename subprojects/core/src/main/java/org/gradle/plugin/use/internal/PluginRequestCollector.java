@@ -29,7 +29,6 @@ import org.gradle.plugin.use.BinaryPluginDependencySpec;
 import org.gradle.plugin.use.PluginDependenciesSpec;
 import org.gradle.plugin.use.PluginId;
 import org.gradle.plugin.use.ScriptPluginDependencySpec;
-import org.gradle.util.CollectionUtils;
 
 import java.util.Collection;
 import java.util.LinkedList;
