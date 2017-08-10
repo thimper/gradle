@@ -91,8 +91,9 @@ class GradleRunnerBuildFailureIntegrationTest extends BaseGradleRunnerIntegratio
 
         then:
         def t = thrown UnexpectedBuildSuccess
-        def expectedOutput = """:helloWorld
+        def expectedOutput = """Task :helloWorld
 Hello world!
+
 
 BUILD SUCCESSFUL"""
         def expectedMessage = """Unexpected build execution success in ${testDirectory.canonicalPath} with arguments ${runner.arguments}
@@ -142,7 +143,7 @@ Output:"""
 
         then:
         UnexpectedBuildFailure t = thrown(UnexpectedBuildFailure)
-        String expectedOutput = """:helloWorld FAILED
+        String expectedOutput = """Task :helloWorld FAILED
 
 FAILURE: Build failed with an exception.
 
@@ -152,10 +153,7 @@ Build file '${buildFile.canonicalPath}' line: 4
 * What went wrong:
 Execution failed for task ':helloWorld'.
 > Unexpected exception
-
-* Try:
-Run with --stacktrace option to get the stack trace. Run with --info or --debug option to get more log output.
-BUILD FAILED"""
+"""
         String expectedMessage = """Unexpected build execution failure in ${testDirectory.canonicalPath} with arguments ${runner.arguments}"""
 
         def normalizedMessage = normalize(t.message)

@@ -167,8 +167,6 @@ class GradleRunnerMechanicalFailureIntegrationTest extends BaseGradleRunnerInteg
 
         and:
         OutputScrapingExecutionResult.normalize(t.message) == """An error occurred executing build with args '${runner.arguments.join(' ')}' in directory '$testDirectory.canonicalPath'. Output before error:
-:helloWorld
-Hello world!
 """
     }
 }
