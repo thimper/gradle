@@ -198,7 +198,7 @@ public class OutputScrapingExecutionResult implements ExecutionResult {
                 java.util.regex.Matcher matcher = pattern.matcher(s);
                 if (matcher.matches()) {
                     String taskStatusLine = matcher.group();
-                    String taskName = matcher.group(1);
+                    String taskName = matcher.group(2);
                     if (!taskName.contains(":buildSrc:")) {
                         // The task status line may appear twice - once for the execution, once for the UP-TO-DATE/SKIPPED/etc
                         // So don't add to the task list if this is an update to a previously added task.
