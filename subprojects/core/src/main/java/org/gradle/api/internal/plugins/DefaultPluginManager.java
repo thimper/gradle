@@ -203,7 +203,7 @@ public class DefaultPluginManager implements PluginManagerInternal {
             pluginsForId = new DefaultDomainObjectSet<PluginWithId>(PluginWithId.class, Sets.<PluginWithId>newLinkedHashSet());
             idMappings.put(pluginId, pluginsForId);
             for (PluginImplementation<?> plugin : plugins.values()) {
-                if (pluginId.equals(plugin.getPluginId()) || plugin.isAlsoKnownAs(pluginId)) {
+                if (plugin.isAlsoKnownAs(pluginId)) {
                     pluginsForId.add(new PluginWithId(pluginId, plugin.asClass()));
                 }
             }
